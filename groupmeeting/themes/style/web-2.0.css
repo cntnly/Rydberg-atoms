@@ -260,7 +260,28 @@ video, iframe, img {
 p, blockquote, iframe, img, ul, ol, pre, video {
   margin-bottom: 1em;
 }
-
+#reflected {
+    position: relative;
+}
+#reflected:before, #reflected:after {
+    display: block;
+    position: absolute;
+    bottom: -1.1em; /* You should change this value to fit your font */
+    left: 0;
+    right: 0;
+  z-index:-10
+}
+#reflected:after {
+    /* Fading using CSS gradient */
+    /* Don't forget to change the colors to your background color */
+    background: -moz-linear-gradient(top, rgba(235,248,251,0.8) 100%, rgba(243,250,254,0.3)20%  ),-moz-element(#reflected) no-repeat;
+    /* I left out the `filter` property,
+       because IE doesn't know `:before` and `:after` pseudo-elements anyway */
+      -moz-transform: scaleY(-1);
+    content: ' ';
+    width: auto;
+    height: 2em;
+}          z-index=-5;
 pre {
   white-space: pre;
   white-space: pre-wrap;
