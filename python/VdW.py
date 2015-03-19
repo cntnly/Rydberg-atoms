@@ -134,7 +134,7 @@ for lA in arange(np.abs(l1 -1), l1+1.1, 2):
                                                     switch_A = -0.5* (switch_A + np.abs(switch_A))
                                                     iA = 0
                                                 iA += 1
-print ('Few')
+print ('N_list')
 for pair in N_list:
     if pair_invert(pair) not in N_list:
         N_list.append(pair_invert(pair))
@@ -188,10 +188,10 @@ for lA in arange(np.abs(np.abs(l1 -1)-1), l1+2.1, 2):
                                                         iB = 0
                                                     iB += 1
                                                     # end search level for B
-                                                if iA == delta_n_max:
-                                                    switch_A = -0.5* (switch_A + np.abs(switch_A))
-                                                    iA = 0
-                                                iA += 1
+                                            if iA == delta_n_max:
+                                                switch_A = -0.5* (switch_A + np.abs(switch_A))
+                                                iA = 0
+                                            iA += 1
 print ('Few Few !!!')
 print ('2st order terms: {0}'.format(len(N_list2)))
 if up2:
@@ -273,6 +273,10 @@ plot(R, out_egr[:,index2])
 def VdW(r,C):
     return C*(r**-6)
 from scipy.optimize import curve_fit
+def C3(r,C):
+    return C*(r**-3)
 popt,pcov = curve_fit(VdW, R[40:], out_egr[:,index1][40:])
+popt2,pcov2 = curve_fit(C3, R[40:], out_egr[:,index1][40:])
 loglog(R, VdW(R, popt))
+print(popt*1e27)
 
