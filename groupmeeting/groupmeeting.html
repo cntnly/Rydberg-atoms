@@ -16,56 +16,63 @@
     <link rel="stylesheet" media="screen" href="themes/transition/horizontal-slide.css">
     <!--link rel="stylesheet" href="http://fonts.googleapis.com/css?family=UnifrakturMaguntia"-->
     <!--style type="text/css">
-      .deck-container>section.slide {padding:0;} /* as samples were originally designed with neon padding */
-  .deck-container .slide {border: 1px dashed #333;} /* for the demo */
-</style -->
-<script src="./extensions/includedeck/load.js"></script>
-<script>
-  includedeck("profile-4 theme:web-2.0", {
-  PREFIX: "./" // deck.js is in the parent folder for this presentation
-  })
-</script>
+	.deck-container>section.slide {padding:0;} /* as samples were originally designed with neon padding */
+	.deck-container .slide {border: 1px dashed #333;} /* for the demo */
+	</style -->
+    <script src="./extensions/includedeck/load.js"></script>
+    <script>
+      includedeck("profile-4 theme:web-2.0", {
+      PREFIX: "./" // deck.js is in the parent folder for this presentation
+      })
+    </script>
 
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
-</script>
-<script type="text/javascript"
-	src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript"
+	    src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
 
-</head>
+  </head>
 
-<body>
+  <body>
 
-  <div class="deck-container">
+    <div class="deck-container">
 
-    <!-- Begin slides -->
-    <section class="slide" id="title">
-      <h1 style="font-size:200%"><div class="frame">Mesoscopic Rydberg-blockaded ensembles in the superatom regime and beyond </div>
-	
-	<a href="nphys3214.pdf" style="font-size:80%; color:gray;font-weight:100">	 <em> Nature Physics</em>   <strong> 11</strong>, 157-161 (2015) </a>
-	<br/><br/>
-      </h1>
-    </section>
+      <!-- Begin slides -->
+      <section class="slide" id="title">
+	<h1 style="font-size:200%"><div class="frame">Mesoscopic Rydberg-blockaded ensembles in the superatom regime and beyond </div>
+	  
+	  <a href="nphys3214.pdf" style="font-size:80%; color:gray;font-weight:100">	 <em> Nature Physics</em>   <strong> 11</strong>, 157-161 (2015) </a>
+	  <br/><br/>
+	</h1>
+      </section>
 
-    <section class="slide" id="Dipole blockage">
-      <h2>Dipole blockage</h2>
-      <div class="frame"> Exhibition of pair excitation on an ensemble of strong interacting atoms</div>
+      <section class="slide" id="Dipole blockade">
+	<h2>Dipole blockade</h2>
+	<div class="frame"> Exhibition of pair excitation on an ensemble of strong interacting atoms</div>
 	</br>
-	<img src = "./pix/exc.png", alt = exc, width =800 >
-    </section>
+	<img style="float:left"src = "./pix/exc.png", alt = exc, width =800px >
+	<img style="float:right" src = "./pix/umbrellas.jpg", alt = umb, width =500px >
+<div class="frame inv" style="position:absolute; bottom:10%; right:5%;background-color:#CDFECD">
+ Dynamics of excitation in: 
+<li> Blockade regime</li>
+<li> Anti blockade regime</li>
+</div>
+<div class="anim-show slide" data-what=".inv"></div>
+      </section>
 
-    <section class="slide" id ="setup">
-      <h2>Setup</h2>
-      <img style ="float:left; margin: 1em 4em 2em 1em", width= "700", src = "./pix/setup.png">
+      <section class="slide" id ="setup">
+	<h2 class="reflected">Setup</h2>
+	<img style ="float:left; margin-right:3em", width= "700", src = "./pix/setup.png">
 	</br>
-	<!-- img class="slide" style ="float:right" src="./pix/setup2.jpg"></img-->
+	<img style ="position:absolute; bottom:0%; right:10%; width:330px" src="./pix/setup2.jpg"></img>
 	<div> <ol>
 	    <li> 2D-MOT</li>
 	    <li> 3D-MOT and coils</li>
-	    <li> Optical dipole trap (CO<sub>2</sub>) </li>
-	    <li> Electron column </li>
-	    <li> Faraday cup </li>
+	    <li> Optical dipole trap (CO<sub>2</sub> @ 1024 $\mu$m) $\rightarrow$ optical latice </li>
+	    <li> Electron column $D \approx 250 $nm $\rightarrow$ address single lattice site</li>
+	    <li> Faraday cup : 40%</li>
 
 	  </ol>
           
@@ -75,156 +82,256 @@
               <span class="demo1">(\frac{x^2}{y^3})</span>
               <div class="anim-show slide" data-what=".demo1"></div>
 	      <div class="anim-attribute slide" data-what="img" data-attr="width=100" ></div>
-      <p>if $\alpha = \beta (x^2) $ </p-->
-    </section>
+	<p>if $\alpha = \beta (x^2) $ </p-->
+      </section>
 
-    <section class="slide" id ="setup2" >
-      <h2>Setup </h2>
-      <p style="float: left; font-size: 20pt; text-align: center; width: 20%; margin-right: 5%; margin-bottom: 0.2em;"><img src="./pix/ex_defect.png" style="width: 100%">Single lattice defect</p>
-      <p style="float: left; font-size: 20pt; text-align: center; width: 20%; margin-right: 5%; margin-bottom: 0.2em;"><img src="./pix/ex_dot.png" style="width: 100%">Dot</p>
-      <p style="float: left; font-size: 20pt; text-align: center; width: 20%; margin-right: 5%; margin-bottom: 0.2em;"><img src="./pix/ex_chain.png" style="width: 100%">Chain</p>
-      <p style="float: left; font-size: 20pt; text-align: center; width: 20%; margin-right: 5%; margin-bottom: 0.2em;"><img src="./pix/ex_ring.png" style="width: 100%">Ring</p>
-      <br/>
-      <img style=" margin: auto", width="50%", src="./pix/Schrodinger.png">Just for fun</img>
-    </section>
-    <section class="slide" id="preparation">
-      <h2>Preparation </h2>
-      <div style="float:left; margin:auto; width: 60%">
-	<p style="float: left; font-size: 20pt; text-align: center; width: 90%; margin-bottom: 0.2em;"><img src="./pix/preparation1.png" style="width: 90%">Cold atom preparation</p>
+      <section class="slide" id ="setup2" >
+	<h2 id="reflected">Setup </h2>
+	<p style="float: left; font-size: 20pt; text-align: center; width: 20%; margin-right: 5%; margin-bottom: 0.10em;"><img src="./pix/ex_defect.png" style="width: 100%">Single lattice defect</p>
+	<p style="float: left; font-size: 20pt; text-align: center; width: 20%; margin-right: 5%; margin-bottom: 1em;"><img src="./pix/ex_dot.png" style="width: 100%">Dot</p>
+	<p style="float: left; font-size: 20pt; text-align: center; width: 20%; margin-right: 5%; margin-bottom: 0.2em;"><img src="./pix/ex_chain.png" style="width: 100%">Chain</p>
+	<p style="float: left; font-size: 20pt; text-align: center; width: 20%; margin-right: 5%; margin-bottom: 0.2em;"><img src="./pix/ex_ring.png" style="width: 100%">Ring</p>
 	<br/>
-	<div style="float:left; margin:0; width:58%">
+	<img class="anim"style=" margin: auto;text-align:bottom; width:50%", src="./pix/Schrodinger.png"></img>
+        <div class="anim-show slide" data-what=".anim"></div>
+      </section>
+      <section class="slide" id="preparation">
+	<h2 id="reflected">Preparation </h2>
+	<div style="float:left; margin:auto; width: 60%">
+	  <p style="float: left; font-size: 20pt; text-align: center; width: 90%; margin-bottom: 0.2em;"><img src="./pix/preparation1.png" style="width: 90%">Cold atom preparation</p>
 	  <br/>
+	  <div style="float:left; margin:0; width:58%">
+	    <br/>
+	    <ul>
+	      <li> BEC &#8594 Compression &#8594 Washing</li>
+	      <li> Scability </li>
+	      <li> Control of size and density </li>
+	    </ul>
+	  </div>
+	  <div style="float:left; margin:0; width:30%">
+	    <img src="./pix/preparation2.png" style="float:right; width: 40%;">
+	  </div>
+	</div>
+	<div style="border-left:medium #ccc solid; position:absolute; left:57%; height:700px;"> </div>
+	<div style ="float:left; margin:auto; width:35%"> 
+	  <img style="margin:auto; width:70%" src="./pix/exc0.png"><br/>
 	  <ul>
-	    <li> BEC &#8594 Compression &#8594 Washing</li>
-	    <li> Scability </li>
-	    <li> Control of size and density </li>
+	    <li>One photon excitation (297 nm)</li>
+	    <li>Ionization of Rydberg atoms by trap laser $\Gamma_{ion} = 45$ kHz</li>
 	  </ul>
 	</div>
-	<div style="float:left; margin:0; width:30%">
-	  <img src="./pix/preparation2.png" style="float:right; width: 40%;">
-	</div>
-      </div>
-      <div style="border-left:medium #ccc solid; position:absolute; left:57%; height:700px;"> </div>
-      <div style ="float:left; margin:auto; width:35%"> 
-	<img style="margin:auto; width:70%" src="./pix/exc0.png"><br/>
-	<ul>
-	  <li>One photon excitation (297 nm)</li>
-	  <li>Ionization of Rydberg atoms by trap laser </li>
-	</ul>
-      </div>
-    </section>
+      </section>
 
-    <section class="slide" id="rate equ">
-      <h2> Effective rate equation </h2>
-      <div style="font-size:80%">
-	<button type="button", onclick="return toggleMe('para1')"> Lindblad equation </button>      &nbsp
-	<button type="button", onclick="return toggleMe('para2')" > Optical Bloch equations </button>
-	<div id="para1" style="display:none">
-	  $$\dot{\rho} = i(\sum_j^N[\mathcal{H}_j, \rho] + [\mathcal{H}_{int}, \rho])+\sum_\nu (1/2)(2L_\nu \rho L_\nu^\dagger - \{L_\nu^\dagger L_\nu,\rho\}) $$
+      <section class="slide" id="rate equ">
+	<h2 id="reflected"> Effective rate equation </h2>
+	<div style="font-size:80%;">
+	  <button style="color:red"id="bt1" type="button", onclick="toggleMe('para1'); setColor('bt1')"> Lindblad equation </button> <a href="http://lmgtfy.com/?q=Lindblah+equation"> >> More</a>
 
-	  where $$\mathcal{H}_j = (\frac{\Omega}{2}| r\rangle\langle g |_j + h.c) + \Delta | r \rangle\langle r | $$
-	  $$\mathcal{H}_{int} = VdW$$
-	  $$L_\nu = \text{jump operator}$$
-	</div> <!-- end para1 -->
-<br/><br/>
-	<div id = "para2" style="display:block">
+<div id="para1" style="display:block">
+  $$\dot{\rho} = i(\sum_j^N[\mathcal{H}_j, \rho] + [\mathcal{H}_{int}, \rho])+\sum_\nu (1/2)(2L_\nu \rho L_\nu^\dagger - \{L_\nu^\dagger L_\nu,\rho\}) $$
 
-	<span style="float:left; "><strong> Non interacting atoms:</strong></span>
-<br/>
-	  <div style="float:left; margin:auto; width:50%">
-	    $$\begin{align} 
-	    \dot{\rho}_{gg} & = -\frac{i}{2} \Omega (\rho_{gr} - \rho_{rg}) + \Gamma_{sp} \rho_{rr}\\ 
-	    \dot{\rho}_{rr} & = +\frac{i}{2} \Omega (\rho_{gr} - \rho_{rg}) - (\Gamma_{ion} + \Gamma_{sp}) \rho_{rr}\\
-	    \dot{\rho}_{gr} & = -\left(\frac{\Gamma_{ion} +\Gamma_{sp} +\Gamma_{d}}{2} + i\Delta\right)\rho_{gr} + \frac{i}{2}\Omega (\rho_{rr} - \rho_{gg}) \\
-	    \dot{\rho}_{ion} & = \Gamma_{ion}\rho_{rr}
-	    \end{align} $$
-	    where:
-	    $$\Gamma_{ion} = 45 \text{ kHz},\, \Gamma_{sp} = 5 \text{ kHz} $$ $$\Gamma_d : \text{decoherence rate (laser, thermal motion, electric field, ...)}$$
-	  </div> <!-- Left column-->
-	  <div style="border-left:medium #ccc solid; position:absolute; left:50%; height:400px;"> </div>
+  where $$\mathcal{H}_j = (\frac{\Omega}{2}| r\rangle\langle g |_j + h.c) + \Delta | r \rangle\langle r | $$
+  $$\mathcal{H}_{int} = VdW$$
+  $$L_\nu = \text{jump operator}$$
+  <br/>
+</div> <!-- end para1 -->
+<div style="padding: 5px"></div>
+<button style="color:gray" id="bt2" type="button", onclick="toggleMe('para2'); setColor('bt2')" > Optical Bloch equations </button>
+<div id = "para2" style="display:none">
+  <div style="padding: 5px"></div>
+  <span style="float:left; "><strong> Non interacting atoms:</strong></span>
+  <br/>
+  <div style="float:left; margin:auto; width:50%">
+    $$\begin{align} 
+    \dot{\rho}_{gg} & = -\frac{i}{2} \Omega (\rho_{gr} - \rho_{rg}) + \Gamma_{sp} \rho_{rr}\\ 
+    \dot{\rho}_{rr} & = +\frac{i}{2} \Omega (\rho_{gr} - \rho_{rg}) - (\Gamma_{ion} + \Gamma_{sp}) \rho_{rr}\\
+    \dot{\rho}_{gr} & = -\left(\frac{\Gamma_{ion} +\Gamma_{sp} +\Gamma_{d}}{2} + i\Delta\right)\rho_{gr} + \frac{i}{2}\Omega (\rho_{rr} - \rho_{gg}) \\
+    \dot{\rho}_{ion} & = \Gamma_{ion}\rho_{rr}
+    \end{align} $$
+    where:
+    $$\Gamma_{ion} = 45 \text{ kHz},\, \Gamma_{sp} = 5 \text{ kHz} $$ $$\Gamma_d : \text{decoherence rate (laser, thermal motion, electric field, ...)}$$
+  </div> <!-- Left column-->
+  <div style="border-left:medium #ccc solid; position:absolute; left:50%; height:400px;"> </div>
 
-	  <div class="test1" style="float:left; margin:auto; width:50%">
-	    $$\dot{\rho}_{gr} \xrightarrow{\Gamma_d \gg 1} 0, \; \gamma=\Gamma_{ion} + \Gamma_{sp} +\Gamma_d :$$
-	    $$\dot{\rho}_{rr} = -\left(\frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2} + \Gamma_{ion} + \Gamma_{sp}\right)\rho_{rr} + \frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2}\rho_{gg} \quad (*)$$
-	    $$\text{  peak ion at } \dot{\rho_{rr}=0} \longrightarrow \rho_{rr}\approx \frac{1}{\frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2} +\Gamma_{ion} + \Gamma_{sp}}\frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2} \rho_{gg}  $$
-	    $$I_{\Omega \ll \gamma} = \rho_{ion}N_{atoms} = \frac{\Gamma_{ion}N_{atoms}}{\Gamma_{ion} + \Gamma_{sp}}\frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2} $$
-<br><br/>
-	  </div> <!-- Right column-->
-<p style="float:left" ><strong> Interacting atoms:</strong> </p>
-<br>&nbsp <br/>
-<div style="float:left; margin:auto; width:50%">
-	$(*)$ is valid for $\Gamma_d \gg 1$ with individual detuning
-	$$ \delta_i = \Delta + \sum_j \frac{C_6^{\text{eff}}}{|r_i - r_j|^6} |r\rangle\langle r|_j$$
+  <div class="test1" style="float:left; margin:auto; width:50%">
+    $$\dot{\rho}_{gr} \xrightarrow{\Gamma_d \gg 1} 0, \; \gamma=\Gamma_{ion} + \Gamma_{sp} +\Gamma_d :$$
+    $$\dot{\rho}_{rr} = -\left(\frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2} + \Gamma_{ion} + \Gamma_{sp}\right)\rho_{rr} + \frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2}\rho_{gg} \quad (*)$$
+    $$\text{  peak ion at } \dot{\rho_{rr}=0} \longrightarrow \rho_{rr}\approx \frac{1}{\frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2} +\Gamma_{ion} + \Gamma_{sp}}\frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2} \rho_{gg}  $$
+    $$I_{\Omega \ll \gamma} = \rho_{ion}N_{atoms} = \frac{\Gamma_{ion}N_{atoms}}{\Gamma_{ion} + \Gamma_{sp}}\frac{\Omega^2 \gamma}{\gamma^2 + 4\Delta^2} $$
+    <br><br/>
+  </div> <!-- Right column-->
+  <p style="float:left" ><strong> Interacting atoms:</strong> </p>
+  <br>&nbsp <br/>
+  <div style="float:left; margin:auto; width:50%">
+    $(*)$ is valid for $\Gamma_d \gg 1$ with individual detuning
+    $$ \delta_i = \Delta + \sum_j \frac{C_6^{\text{eff}}}{|r_i - r_j|^6} |r\rangle\langle r|_j$$
+    $$C_6^{\text{eff}} = 16_{-10}^{+48} \text{ MHz}\mu\text{m}^6$$
+    $\Rightarrow$ <mark>Monte-Carlo simulation</mark>
+  </div>
+  <img  style ="position:absolute; bottom:30px; right:20px; width:20%" src = "./pix/C_eff.png">
+  <!--div class="anim-show slide" data-what=".test1" ></div-->
+  <div class="anim-attribute slide" data-what="img" data-attr="width:46%" ></div>
+
+</div><!--end para2-->
+<script type="text/javascript">
+  function toggleMe(a){
+  var e=document.getElementById(a);
+  if(!e)
+  return true;
+  if(e.style.display=="none"){
+  e.style.display="block";
+  } else {
+  e.style.display="none"
+  }
+  return true;
+  }
+  function setColor(btn){
+  var e=document.getElementById(btn);
+  if(e.style.color == "gray"){
+  e.style.color = "red";
+  }else{
+  e.style.color = "gray"
+  }
+  return true;
+  }
+</script>
+</section>
+
+<section class="slide" id="benchmark">
+  <h2 id="reflected"> Benchmarch </h2>
+  <img src = "./pix/benchmark3.png" width ="80%">
+</section>
+
+<section class="slide" id="On resonance exc">
+  <h2 id="reflected"> On resonance excitation -blockade regime</h2>
+  <img style="float:right; margin-bottom:2em" src="./pix/g2.png">
+  <div style="float:left;width:50%">
+    <img  style="position:relative;top:15%; left:-10%; margin:auto; width=200px;" src="./pix/on_res.png" />
+    <br><br/>
+    <ul>
+      <li> $2\sigma \leq 3\,\mu$m, &nbsp $T \approx 3.5 \,\mu$K </li>
+      <li> $N_{atoms} = 100-500$ </li>
+      <li>$\Omega / 2\pi = 6$ kHz</li>
+      <br>
+      <li>Anti-bunching $g^2(0) = 0.08$, residual background atoms</li>
+      <li>Continuously operating <mark>single-ion source</mark></li>
+      <li> Overdamped regime = strong blockade </li>
+    </ul>
+  </div>
+  <div style="margin:auto;width=50%">
+    <br><br>
+    <p style="text-align:center; font-size:80%">	$$g^{(2)}(\tau) = \frac{\langle I(t) I(t+\tau)\rangle}{\langle I(t)\rangle\langle I(t+\tau)\rangle}$$ </p>
+  </div>
+</section>
+
+<section class="slide" id="varying size">
+  <h2 id="reflected"> On resonance excitation - blockade break down </h2>
+  <img style="margin-bottom:1.em;width:40%" src="./pix/Rbmeasure.png">
+  <div style="float:center"> <ul>
+      <li> Varying axial size while keeping ground atom density constant </li>
+      <li> Blockade regime: More atoms contribute to the same signal $\longrightarrow$ decrease </li> 
+      <li> Blockade breaks down $\longrightarrow$ blockade radius measurement  $r_B \approx 2.7 \pm 0.8\; \mu$m</li>
+      <li style="color:green"><font size=4em> $g^{(2)}_{< r_B}(0) \approx 0.5 \longrightarrow$</font> no more anti-bunching ? </li>
+							  <li style="color:green"><font size=4em>$1 - g^{(2)}(0) = (1-g^{(2)}_{l < rB}(0))r_B/l$ </font>  &nbsp ?? <img style="position:absolute; bottom:-20px;left:35%;width:80px; background-color:transparent; border:none; box-shadow:none"src="./pix/face.gif"/> </li>
+																   </ul></div>
+</section>
+
+<section class="slide" id="off-resonance">
+  <h2 id="reflected"> Off resonance excitation - anti blockade regime </h2>
+  <div style="float:left;width:50%; margin-bottom:1em">
+    <img style="margin:auto;width:75%" src="./pix/off_res.png"/>
+  </div>
+  <div style="float:left;width:50%; margin:auto">
+    <img style="margin:auto; width:75%" src="./pix/saturation.png"/>
+  </div><br/>
+  <div style="padding:150px"></div>
+  <table border="1" width="70%">
+    <tr>
+      <th>On resonace</th>
+      <th style="border-bottom:transparent; width:10%"></th><th>Off resonance</th>
+    </tr>
+    <tr>
+      <td>Strong blockade</td><td></td><td>Aggregate</td>
+    </tr>
+    <tr>
+      <td>Anti bunching</td><td></td><td>Ion bunching</td>
+    </tr>
+    <tr>
+      <td>$I_{\Omega < \gamma} \propto \frac{\Omega^2}{\gamma}$</td><td></td><td>$I_{\Omega < \gamma} \propto  \frac{\Omega^2\gamma}{\gamma^2+4\Delta^2}$</td>
+										     </tr>
+    <tr>
+      <td>$\Omega \nearrow$: blockade break down</td><td></td><td>$\sqrt{N}\Omega\gtrsim \Delta$: less pronounced</td>
+    </tr>
+    <tr>
+      <td></td><td></td>
+    </tr>
+
+  </table>
+</section>
+
+<section class="slide" id="dynamics">
+  <h2 id="reflected"> Dynamics of pair correlation function </h2>
+  <img style="margin-bottom:1em; height:60%" src="./pix/dynamics.png">
+  <ul>
+<li>I, II: Balance between ionization and excitation </li>
+<li>III: Dynamics of colectively enhanced excitation $\rightarrow$ quicky saturate $g^{(2)}$</li>
+</ul>
+</section>
+
+<section class="slide" id="python">
+  <h2 id="reflected"> Python </h2>
+<a target="iframe_python" href="http://www.stat.washington.edu/~hoytak/blog/whypython.html"> Why <mark>python</mark> for research? </a> 
+<iframe name="iframe_python" style="width:100%; height:25%; border:double" src="./pix/face.gif"> </iframe>
+<div style="float:left; width:50%"
+<ul>
+<li> Holistic language design </li>
+<li> Readability </li>
+<li> Balance of high level and low level programming:<br>&nbsp &nbsp &nbsp<em> numpy, cython,...</em> </li>
+<li> Hierarchical module system </li>
+<li> Ipython and Notebook (+Scipy) $\approx$ Matlab/Mathematica </li>
+<li> ... </li>
+<li> Open-source </li>
+<li> Native on linux, Qutip </li>
+<li><code> Python in action: <a target="iframe_VdW" href="http://127.0.0.1:8888/0d2b63a8-a461-4d47-bf63-7e8498a2f59b"> Van der Waals interaction</a></code> <br> &nbsp&nbsp&nbsp&nbsp ~ 20 s v.s ~ 900 s with Mathematica</li>
+</ul>
 </div>
-<img  style ="position:absolute; bottom:30px; right:20px" src = "./pix/C_eff.png" width="40%">
- <div class="anim-show slide" data-what=".test1" ></div>
- <div class="anim-show slide" data-what="img" ></div>
+  <iframe name="iframe_VdW" style="position:absolute; top:45%; right:2.7%;width:45%; height:50%; border:double red;scrolling:yes"src="http://127.0.0.1:8888/63b2165a-c975-47f6-b129-760ab45b0389"> abc  </iframe>
 
-	</div><!--end para2-->
-	<script type="text/javascript">
-	  function toggleMe(a){
-	  var e=document.getElementById(a);
-	  if(!e)return true;
-	  if(e.style.display=="none"){
-	  e.style.display="block"
-	  } else {
-	  e.style.display="none"
-	  }
-	  return true;
-	  }
-	</script>
-    </section>
+</section>
 
-    <section class="slide" id="benchmark">
-      <h2 id="reflected"> Benchmarch </h2>
-      <img src = "./pix/benchmark3.png" width ="80%">
-    </section>
+<section class="slide" id="coucou">
+  <h2 id="reflected"> Coucou </h2>
+  <h3 style="color:red">A gift ... <span class="inv" style="opacity:0"> from GOD </span></h3>
+<img class="giasach" style="position:absolute;left:0px; bottom:0px; width:500px; z-index:-10"src = "./pix/giasach.jpg">
+<div class="frame inv" style="position:absolute; top:35%;right:7%; opacity:0; transform:rotate(-0deg); z-index:10">
+<code>
+<li> Surname: NGUYEN </li>
+<li> Forename: unknown </li>
+<li> Sex: &#x2640</li>
+<li> Age:~ 20 week old</li>
+<li> G-day: end of July </li>
+</code>
+</div>
+<img class="coucou" style="position:absolute; top:20%;left:10%; width:0px;z-index:-20 " src = "./pix/coucou.png">
 
-    <section class="slide" id="On resonance exc">
-      <h2> On resonance excitation </h2>
-      <img style="margin:auto" src="./pix/g2.png">
-      <div style="float:right">
-      <ul>
-        <li> g2 </li>
-      
-      </ul>
-      </div>
-    </section>
+<div class="anim-attribute slide" data-what=".giasach" data-attr="width:1200px" ></div>
+<div class="anim-attribute slide anim-continue" data-what=".giasach" data-attr="opacity:0." ></div>
+<div class="anim-attribute slide anim-continue" data-what=".coucou" data-attr="width:800px" ></div>
+        <div class="anim-wait slide" data-dur="1200"></div>
+<div class="anim-attribute slide anim-continue" data-what=".inv" data-attr="opacity:100" ></div>
 
-    <section class="slide" id="varying size">
-      <h2> On resonance excitation - varying size </h2>
-      <img style="margin:auto" src="./pix/Rbmeasure.png">
-    </section>
 
-    <section class="slide" id="off-resonance">
-      <h2> Off resonance excitation </h2>
-      <img style="margin:auto" src="./pix/off_res.png">
-      <img style="margin:auto" src="./pix/saturation.png">
-    </section>
 
-    <section class="slide" id="dynamics">
-      <h2> Dynamics of pair correlation function </h2>
-      <img style="margin:auto" src="./pix/dynamics.png">
-    </section>
+</section>
+<!-- DEMO: simplemath -->
 
-    <section class="slide" id="python">
-      <h2> Python vs Mathematica </h2>
-      
-    </section>
+<!-- deck.navigation snippet -->
+<!--a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+    <a href="#" class="deck-next-link" title="Next">&#8594;</a-->
 
-    <section class="slide" id="coucou">
-      <h2> Coucou </h2>
-      
-    </section>
-    <!-- DEMO: simplemath -->
+<!-- deck.status snippet -->
+<p class="deck-status" aria-role="status"> <span class="deck-status-current"></span> / <span class="deck-status-total"></span> </p>
 
-    <!-- deck.navigation snippet -->
-    <!--a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
-	<a href="#" class="deck-next-link" title="Next">&#8594;</a-->
-
-    <!-- deck.status snippet -->
-    <p class="deck-status" aria-role="status"> <span class="deck-status-current"></span> / <span class="deck-status-total"></span> </p>
-
-    </div>
+</div>
 </body>
 </html>

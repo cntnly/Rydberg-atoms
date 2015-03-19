@@ -2,13 +2,13 @@
 
 from __future__ import division
 # Define levels
-n1 = 60
-l1 = 1
+n1 = 50
+l1 =0
 s1 = 1/2
 j1 = l1 + 1/2
 m1 = j1
-n2 = 60
-l2 = 1
+n2 = 51
+l2 = 0
 s2 =1/2
 j2 = l2 + 1/2
 m2 = j2
