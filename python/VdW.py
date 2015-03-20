@@ -257,26 +257,37 @@ R_max = 3.0e-5 #um
 R_min = 1.0e-6
 #R = R_max
 R_num = 100 # step in logarithm
-out_egr = np.empty((R_num, length))
-R = np.logspace(log10(R_min), log10(R_max), num = R_num)
-for i,elm in enumerate(R):
-    out_egr[i] = np.linalg.eigvalsh(EI + V_total* coef/(elm**3)) - pair_12.E_Zeeman
 index1 = Union_list.index(pair_12)
 index2 = Union_list.index(pair_invert(pair_12))
+out_egr = np.empty((R_num, length))
+out_coef = np.empty(R_num)
+out_vector = np.empty((length, length))
+R = np.logspace(log10(R_min), log10(R_max), num = R_num)
+for i,elm in enumerate(R):
+    #out_egr[i] = np.linalg.eigvalsh(EI + V_total* coef/(elm**3)) - pair_12.E_Zeeman
+    out_egr[i] , out_vector = np.linalg.eig(EI + V_total* coef/(elm**3))
+    out_egr[i] = out_egr[i] - pair_12.E_Zeeman
+    out_coef[i] = np.argmax(abs(out_vector[:,index1]))
+
 figure(3)
 clf()
-plot(R, out_egr[:,index1])
-plot(R, out_egr[:,index2])
+semilogx(R, out_egr[:,index1])
+semilogx(R, out_egr[:,index2])
 
 
 #fit data
 def VdW(r,C):
     return C*(r**-6)
 from scipy.optimize import curve_fit
-def C3(r,C):
-    return C*(r**-3)
-popt,pcov = curve_fit(VdW, R[40:], out_egr[:,index1][40:])
-popt2,pcov2 = curve_fit(C3, R[40:], out_egr[:,index1][40:])
-loglog(R, VdW(R, popt))
+
+popt,pcov = curve_fit(VdW, R[40:], abs(out_egr[:,index1][40:]))
+popt2,pcov = curve_fit(VdW, R[40:], abs(out_egr[:,index2][40:]))
+figure(4)
+clf()
+loglog(R, VdW(R, popt), R,abs(out_egr[:,index1]))
+loglog(R, VdW(R, popt2),R,abs(out_egr[:,index2]))
+
 print(popt*1e27)
+print(popt2*1e27)
+
 
