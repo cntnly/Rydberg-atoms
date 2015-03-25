@@ -14,9 +14,9 @@ try:
     from radinte_log import *
 except ImportError:
     raise Exception('No radinte module found')
-def radinte_pair(atomA, atomAp, I =1):
+def radinte_atom(atomA, atomAp, I =1):
     """
-    radinte_pair(atomA, atomAp, I =1)
+    radinte_atom(atomA, atomAp, I =1)
     Calculate radinte for pair of atoms"""
     return radinte(atomA.E_radinte, atomA.l, atomAp.E_radinte, atomAp.l, I)
 
@@ -25,12 +25,29 @@ try:
 except ImportError:
     raise Exception('No wigner module found')
     
+def A_Stark (lA, jA, mA, lAp, jAp, mAp):
+    """
+    A_Stark (lA, jA, mA, lAp, jAp, mAp)
+    Calculate angular integral for Stark shift, case F aligned with quantization axis
+    """
+    S = Wigner3j(jA, 1, jAp, -mA, 0, mAp)   
+    A = (1-2*((jA + mA + jAp +1/2)%2))*np.sqrt((2*jA + 1)* (2*jAp +1))*Wigner6j(jA, 1, jAp, lAp, 1/2, lA) * np.sqrt((2*lA +1)*(2*lAp +1))* Wigner3j(lA, 1, lAp, 0,0,0)
+    return A*S
+    
+    
+def A_Stark_atom(atomA, atomAp):
+    """
+    A_Stark_atom(atomA, atomAp)
+    Calculate angular integral for Stark shift, case F aligned with quantization axis
+    """
+    return A_Stark(atomA.l, atomA.j, atomA.m, atomAp.l, atomAp.j, atomAp.m)
+    
 def R_Int(pairAB, pairABp):
     """
-    R_Int(pairAB, pairABp):
+    R_Int(pairAB, pairABp)
     Calculate the radial integral part of the VdW interaction
     """
-    return radinte_pair(pairAB.atom1, pairABp.atom1)*radinte_pair(pairAB.atom2, pairABp.atom2)
+    return radinte_atom(pairAB.atom1, pairABp.atom1)*radinte_atom(pairAB.atom2, pairABp.atom2)
 
 def A_Integral(lA, jA, mA, lB, jB, mB, lAp, jAp, mAp, lBp, jBp, mBp, theta):
     """
@@ -47,13 +64,13 @@ def A_Integral(lA, jA, mA, lB, jB, mB, lAp, jAp, mAp, lBp, jBp, mBp, theta):
     S += A*(1- 3* np.cos(theta)**2)
 
     A = Wigner3j(jA, 1, jAp, -mA, -1, mAp)* Wigner3j(jB, 1, jBp, -mB, 0, mBp)
-    A = -Wigner3j(jA, 1, jAp, -mA, 1, mAp)* Wigner3j(jB, 1, jBp, -mB, 0, mBp)
-    A = Wigner3j(jA, 1, jAp, -mA, 0, mAp)* Wigner3j(jB, 1, jBp, -mB, -1, mBp)
-    A = -Wigner3j(jA, 1, jAp, -mA, 0, mAp)* Wigner3j(jB, 1, jBp, -mB, 1, mBp)
-    S += 1.5* np.sin(theta)* np.cos(theta)* np.sqrt(2)* A
+    A += -Wigner3j(jA, 1, jAp, -mA, 1, mAp)* Wigner3j(jB, 1, jBp, -mB, 0, mBp)
+    A += Wigner3j(jA, 1, jAp, -mA, 0, mAp)* Wigner3j(jB, 1, jBp, -mB, -1, mBp)
+    A += -Wigner3j(jA, 1, jAp, -mA, 0, mAp)* Wigner3j(jB, 1, jBp, -mB, 1, mBp)
+    S += -1.5* np.sin(theta)* np.cos(theta)* np.sqrt(2)* A
 
-    A = (1-2*((jA + mA + jAp +1/2)%2))*np.sqrt((2*jA + 1)* (2*jAp +1))*Wigner6j(jA, 1, jAp, lAp, 1/2, lA) * np.sqrt((2*lA +1)*(2*lAp +1))* Wigner3j(lA, 1, lAp, 0,0,0)
-    A *= (1-2*((jB + mB + jBp +1/2)%2))*np.sqrt((2*jB + 1)* (2*jBp +1))*Wigner6j(jB, 1, jBp, lBp, 1/2, lB) * np.sqrt((2*lB +1)*(2*lBp +1))* Wigner3j(lB, 1, lBp, 0,0,0)
+    A = (1-2*((jA + mA + jAp +1./2)%2))*np.sqrt((2*jA + 1)* (2*jAp +1))*Wigner6j(jA, 1, jAp, lAp, 1/2, lA) * np.sqrt((2*lA +1)*(2*lAp +1))* Wigner3j(lA, 1, lAp, 0,0,0)
+    A *= (1-2*((jB + mB + jBp +1./2)%2))*np.sqrt((2*jB + 1)* (2*jBp +1))*Wigner6j(jB, 1, jBp, lBp, 1/2, lB) * np.sqrt((2*lB +1)*(2*lBp +1))* Wigner3j(lB, 1, lBp, 0,0,0)
     S *= A
     return S
 
@@ -77,6 +94,8 @@ test_term = test_term*test_term
 test_term2 = coef/(R_test2**3)
 test_term2 = test_term2*test_term2
 
+print(pair_12)
+print('theta = {0}'.format(theta*180/pi))
 N_list = []
 N_list2 = []
 
@@ -275,8 +294,10 @@ out_egr2 = np.asarray([out_egr[i, out_coef[1,i]] for i in range(R_num)])
 
 figure(3)
 clf()
-semilogx(R, out_egr1)
-semilogx(R, out_egr2)
+#semilogx(R, out_egr1)
+#semilogx(R, out_egr2)
+semilogx(R, out_egr[:,index1])
+semilogx(R, out_egr[:,index2])
 
 
 #fit data
@@ -284,12 +305,20 @@ def VdW(r,C):
     return C*(r**-6)
 from scipy.optimize import curve_fit
 
-popt,pcov = curve_fit(VdW, R[80:], abs(out_egr1[80:]))
-popt2,pcov = curve_fit(VdW, R[80:], abs(out_egr2[80:]))
+#popt,pcov = curve_fit(VdW, R[100:], abs(out_egr1[100:]))
+#popt2,pcov = curve_fit(VdW, R[80:], abs(out_egr2[80:]))
+#figure(4)
+#clf()
+#loglog(R, VdW(R, popt), R,abs(out_egr1))
+#loglog(R, VdW(R, popt2),R,abs(out_egr2))
+
+popt,pcov = curve_fit(VdW, R[100:], abs(out_egr[:,index1][100:]))
+popt2,pcov2 = curve_fit(VdW, R[100:], abs(out_egr[:,index2][100:]))
 figure(4)
 clf()
-loglog(R, VdW(R, popt), R,abs(out_egr1))
-loglog(R, VdW(R, popt2),R,abs(out_egr2))
+loglog(R, VdW(R, popt), R,abs(out_egr[:,index1]))
+loglog(R, VdW(R, popt2), R,abs(out_egr[:,index2]))
+
 
 print(popt*1e27)
 print(popt2*1e27)
