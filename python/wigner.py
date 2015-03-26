@@ -8,7 +8,7 @@ from numpy import arange, floor, exp, log, asarray, split, pi, around
 Wigner3j_list =[]
 Wigner6j_list = []
 
-def log_factorial(n, N_max = 20):
+def log_factorial(n, N_max = 200):
     """
     log_factorial(n, N_max = 50)
     return Stirling approximation of log of factorial of n if n > N_max
