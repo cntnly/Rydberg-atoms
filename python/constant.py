@@ -83,6 +83,14 @@ class Ryd_atom(object):
     Define Rydberg atom with its n, l, j ,m
     Return En, Zeeman shift, E_radinte,"""
     def __init__(self, n, l, j, m):
+        if l>n:
+            raise Exception('l > n')
+        if j > l+0.5:
+            raise Exception('j > l+1/2')
+        if j < np.abs(l-0.5):
+            raise Exception('j < |l-1/2|')
+        if np.abs(m) > j:
+            raise Exception('|m| > j')
         self.n = n
         self.l = l
         self. j = j
@@ -90,7 +98,7 @@ class Ryd_atom(object):
         self.lj = choose_lj(l,j)
         self.En = En(n, self.lj)
         self.E_radinte = E_radinte(n, self.lj)
-        self.Zeemanshift = Zeemanshift(l, j, m, Bfield)
+        self.E_Zeeman = self.En + Zeemanshift(l, j, m, Bfield)
     def __repr__(self):
         return "atom {0}, {1}, {2} ,{3}".format(self.n, self.l, self.j, self.m)
     def __eq__(self, other):
@@ -105,13 +113,13 @@ class Ryd_pair (object):
             self.atom1 = atom1
             self.atom2 = atom2
             self. E = atom1.En + atom2.En
-            self.E_Zeeman = self.E + atom1.Zeemanshift + atom2.Zeemanshift
+            self.E_Zeeman = atom1.E_Zeeman + atom2.E_Zeeman
         else:
             raise Exception('input should be of Ryd_atom class')
             pass
             
     def __repr__(self):
-        return '{0} and {1}'.format(self.atom1, self.atom2)
+        return '{0} and {1}\n'.format(self.atom1, self.atom2)
     def __eq__(self, other):
         return (self.atom1 == other.atom1) & (self.atom2 == other.atom2)
 def pair_invert(pair):

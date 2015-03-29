@@ -47,25 +47,25 @@ def R_Int(pairAB, pairABp):
     """
     return radinte_atom(pairAB.atom1, pairABp.atom1)*radinte_atom(pairAB.atom2, pairABp.atom2)
 
-def A_Integral(lA, jA, mA, lB, jB, mB, lAp, jAp, mAp, lBp, jBp, mBp, theta):
+def A_Integral(lA, jA, mA, lB, jB, mB, lAp, jAp, mAp, lBp, jBp, mBp, theta, epsilon =1e-10):
     """
     A_Int(lA, jA, mA, lB, jB, mB, lAp, jAp, mAp, lBp, jBp, mBp, theta)
     Calculate the angular part of VdW interaction. Needed Wigner3j and Wigner6j
     """
     S = 0.
-    if (2 - 3* np.sin(theta)**2) !=0 :
+    if np.abs(2 - 3* np.sin(theta)**2) > epsilon :
         A = Wigner3j(jA, 1, jAp, -mA, 1, mAp)* Wigner3j(jB, 1, jBp, -mB, -1, mBp)
         A += Wigner3j(jA, 1, jAp, -mA, -1, mAp)* Wigner3j(jB, 1, jBp, -mB, 1, mBp)
         S += - A* (2 - 3* np.sin(theta)**2)*0.5
-    if np.sin(theta) !=0 :
+    if np.abs(np.sin(theta)) > epsilon:
         A = Wigner3j(jA, 1, jAp, -mA, 1, mAp)* Wigner3j(jB, 1, jBp, -mB, 1, mBp)
         A += Wigner3j(jA, 1, jAp, -mA, -1, mAp)* Wigner3j(jB, 1, jBp, -mB, -1, mBp)
         S += - A* (np.sin(theta)**2)*1.5
-    if (1-3*np.cos(theta)**2) !=0:
+    if np.abs(1-3*np.cos(theta)**2) > epsilon:
         A = Wigner3j(jA, 1, jAp, -mA, 0, mAp)* Wigner3j(jB, 1, jBp, -mB, 0, mBp)
         S += A*(1- 3* np.cos(theta)**2)
     
-    if np.sin(2*theta)!=0 :
+    if np.abs(np.sin(2*theta)) > epsilon :
         A = Wigner3j(jA, 1, jAp, -mA, -1, mAp)* Wigner3j(jB, 1, jBp, -mB, 0, mBp)
         A += -Wigner3j(jA, 1, jAp, -mA, 1, mAp)* Wigner3j(jB, 1, jBp, -mB, 0, mBp)
         A += Wigner3j(jA, 1, jAp, -mA, 0, mAp)* Wigner3j(jB, 1, jBp, -mB, -1, mBp)
