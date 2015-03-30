@@ -4,7 +4,9 @@ from __future__ import division
 import numpy as np
 #import numexpr as ne
 import sys
-sys.path.append('/home/2kome/Desktop/testdeck/test1/python')
+sys.path.append('C:/Users/r14/Documents/GitHub/test/python')
+
+from imp import reload
 
 import para
 from para import *
@@ -40,14 +42,15 @@ pair_78 =Ryd_pair(Ryd_atom(n1,l1,j1,-m1),Ryd_atom(n2, l2, j2, m2))
 
 
 coef = a_0*a_0*e*e/(4*np.pi*epsilon_0*h)
-coef_F = Ffield*e*e/(4*np.pi*epsilon_0*h)
+coef_F = Ffield*e*a_0/h
 test_term = coef/(R_test**3)
 test_term = test_term*test_term
 
 print(pair_12)
-print('theta = {0}'.format(theta*180/pi))
+print('theta = {0} deg'.format(theta*180/pi))
 print('B_field = {0} G'.format(Bfield*1e4))
-
+print('F_field = {0} V/cm'.format(Ffield))
+Ffield = Ffield*100 # V/m
 
 #check degeneracy
 N_list = [pair_12]
@@ -62,7 +65,7 @@ for lA in np.arange(max(l1-2, 0), l1+2.1,1):
                         except Exception:
                             print(lA, jA, mA)
                         if np.abs(atomA_temp.E_Zeeman - atom_1.E_Zeeman) < 1e-10:
-                            print atomA_temp
+                            #print (atomA_temp)
                             for lB in np.arange(max(l2-2, 0), l2+2.1):
                                 if lB < n2:
                                     for jB in np.arange(max(j2- 2, 0.5), j2 + 2.1):
@@ -74,7 +77,7 @@ for lA in np.arange(max(l1-2, 0), l1+2.1,1):
                                                     except Exception:
                                                         print (lB, jB, mB)
                                                     if np.abs(atomB_temp.E_Zeeman - atom_2.E_Zeeman) < 1e-10:
-                                                        print atomB_temp
+                                                        #print (atomB_temp)
                                                         pair_temp = Ryd_pair(atomA_temp, atomB_temp)
                                                         if pair_temp not in N_list:
                                                             N_list.append(pair_temp)
@@ -83,9 +86,6 @@ print('Degenerated pairs ={0}'.format(len(N_list)))
 
 #Search 1st order coupling terms
 N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
-#N_list2 = Search_VdW([pair_34],N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
-#N_list3 = Search_VdW([pair_56],N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
-#N_list4 = Search_VdW([pair_78],N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
 
 def count_doub(list1, list2):
     count =0
@@ -102,70 +102,51 @@ for pair in N_list:
         N_list.append(pair_invert(pair))
 print ('1st order terms: {0}'.format(len(N_list)))
 
-    
-# Search for 2nd order terms
-#test_term2 = coef/(R_test2**3)
-#test_term2 = test_term2*test_term2
-#N_list2 =  Search_VdW(N_list1, N_list, test_term2, Choice2, delta_n_max2, l1, l2, 2, m1,m2, 2)
-#print ('Few Few !!!')
-#print ('2st order terms: {0}'.format(len(N_list2)))
 
+# Search for temp coupled by Stark effect
+N_list_Stark=[]
+Choice_F = (coef_F*coef_F)/Choice_F
+N_list_Stark = Search_Stark(pair_12, N_list, Choice_F, delta_n_max)
+print('1st order Stark terms: {0}'.format(len(N_list_Stark)))
 
-#N_list = N_list + N_list2 # sure that elements of N_list are not in N_list2
-#for pair in N_list:
-#    if pair_invert(pair) not in N_list:
-#        print(pair)
-#        N_list.append(pair_invert(pair))
+count_doub(N_list, N_list_Stark)
 
-# Search for 3nd order terms
-#test_term3 = coef/(R_test3**3)
-#test_term3 = test_term3*test_term3
-#N_list3 =Search_VdW(N_list2, N_list, test_term3, Choice3, delta_n_max2, l1, l2, 3, m1,m2, 3)
-#print ('Few Few Few!!!')
-#print ('3st order terms: {0}'.format(len(N_list3)))
-
-Union_list = N_list # sure that elements of N_list are not in N_list2
+Union_list = N_list + N_list_Stark # sure that elements of N_list are not in N_list2
 for pair in Union_list:
     if pair_invert(pair) not in Union_list:
         Union_list.append(pair_invert(pair))
         
         
 print ('Matrix size: {0}'.format(len(Union_list)))
-raw_input("Press enter to continue")
-#theta = 0* pi/2
-#print(theta*180/pi)
-
-
-##Create base for testing
-#Union_list =[]
-#for l1 in [0,1]:
-#    for j1 in arange(abs(l1 - 0.5), abs(l1 + 0.6)):
-#        for m1 in arange(-j1, j1+1):
-#            atom1temp = Ryd_atom(60, l1, j1,m1)
-#            for l2 in [0,1]:
-#                for j2 in arange(abs(l2 - 0.5), abs(l2 + 0.6)):
-#                    for m2 in arange(-j2, j2+1):
-#                        atom2temp = Ryd_atom(60, l2,j2,m2)
-#                        Union_list.append(Ryd_pair(atom1temp, atom2temp))
+#try:
+#    raw_input("Press enter to continue")
+#except:
+#    input("Press Enter to continue")
                         
 # sort list as energy order
 Union_list = sorted(Union_list, key = lambda energy: energy.E_Zeeman)
 print(len(Union_list))                    
 figure(1)
 clf()
-plot([elm.E_Zeeman - pair_12.E_Zeeman for elm in Union_list])
+plot([(elm.E_Zeeman - pair_12.E_Zeeman)*1e-9 for elm in Union_list],'-o')
+xlabel('List N°')
+ylabel('Rel. energy (GHz)')
 # Create interaction Matrix
 length = len(Union_list)
 # create mask
 V_total = np.zeros((length,length))
 V_R = np.zeros_like(V_total)
 V_A = np.zeros_like(V_total)
+V_Stark1 = np.zeros_like(V_total)
+V_Stark2 = np.zeros_like(V_total)
 # mask to calculate only lower triangular matrix
 mask1 = np.tril(np.ones_like(V_total))!=0
 
 #vectorize necessary functions
 rad_vec = np.vectorize(radinte)
 A_vec = np.vectorize(A_Integral)
+A_Stark_vec = np.vectorize(A_Stark)
+
 V_row = np.asarray([(elm.atom1.n, elm.atom1.l, elm.atom1.j, elm.atom1.m, elm.atom1.E_radinte, elm.atom2.n, elm.atom2.l, elm.atom2.j, elm.atom2.m, elm.atom2.E_radinte) for elm in Union_list])
 Pair1_n1, Pair2_n1 = meshgrid(V_row[:,0],V_row[:,0])
 Pair1_l1, Pair2_l1 = meshgrid(V_row[:,1],V_row[:,1])
@@ -197,6 +178,34 @@ clf()
 imshow(V_total,)
 colorbar()
 
+V_R = np.zeros_like(V_total)
+V_A = np.zeros_like(V_total)
+V_A[mask1] = A_Stark_vec(Pair1_l1, Pair1_j1, Pair1_m1, Pair2_l1, Pair2_j1, Pair2_m1)*(Pair1_n2 == Pair2_n2) *(Pair1_l2 == Pair2_l2)*(Pair1_j2 == Pair2_j2)*(Pair1_m2 == Pair2_m2)
+mask2 = V_A[mask1] !=0
+if len(V_A[V_A!=0])!=0:
+    V_R[V_A !=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)
+    V_Stark1[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
+    V_Stark1 = V_Stark1 + V_Stark1.T - np.diag(V_Stark1.diagonal())
+    V_Stark1 = V_Stark1*1e-9
+figure(3)
+clf()
+imshow(V_Stark1)
+colorbar()
+
+V_R = np.zeros_like(V_total)
+V_A = np.zeros_like(V_total)
+V_A[mask1] = A_Stark_vec(Pair1_l2, Pair1_j2, Pair1_m2, Pair2_l2, Pair2_j2, Pair2_m2)*(Pair1_n1 == Pair2_n1) *(Pair1_l1 == Pair2_l1)*(Pair1_j1 == Pair2_j1)*(Pair1_m1 == Pair2_m1)
+mask2 = V_A[mask1] !=0
+if len(V_A[V_A!=0])!=0:
+    V_R[V_A !=0] = rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
+    V_Stark2[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
+    V_Stark2 = V_Stark2 + V_Stark2.T - np.diag(V_Stark2.diagonal())
+    V_Stark2 = V_Stark2*1e-9
+figure(4)
+clf()
+imshow(V_Stark2)
+colorbar()
+
 # Zero-th Energy
 EI = np.diag(np.asarray([elm.E_Zeeman for elm in Union_list]))*1e-9
 
@@ -219,7 +228,7 @@ out_vector = np.empty((length, length))
 R = np.logspace(log10(R_min), log10(R_max), num = R_num)
 for i,elm in enumerate(R):
     #out_egr[i] = np.linalg.eigvalsh(EI + V_total* coef/(elm**3)) - pair_12.E_Zeeman
-    out_egr[i] , out_vector = np.linalg.eigh(EI + 1e18*V_total* coef/(elm**3))
+    out_egr[i] , out_vector = np.linalg.eigh(EI + 1e18*V_total* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2))
     out_egr[i] = out_egr[i] - pair_12.E_Zeeman*1e-9
     out_coef[0,i] = np.argmax(abs(out_vector[index1,:]))
     out_coef[1,i] = np.argmax(abs(out_vector[index2,:]))
@@ -232,18 +241,21 @@ out_egr1 = np.asarray([out_egr[i, out_coef[0,i]] for i in range(R_num)])
 #out_egr4 = np.asarray([out_egr[i, out_coef[3,i]] for i in range(R_num)])
 
 
-figure(3)
+figure(5)
 clf()
 #semilogx(R, out_egr1)
 #semilogx(R, out_egr2)
-semilogx(R, out_egr1)
+semilogx(R, out_egr, R, out_egr1, '+')
+xlabel('$R (\mu$m)')
+ylabel('Rel. energy (GHz)')
 #semilogx(R, out_egr[:,index3])
 #semilogx(R, out_egr[:,index4])
 
 #fit data
 def VdW(r,C):
     return C*(r**-6)
-from scipy.optimize import curve_fit
+def pow_fit(r,C,n):
+    return C*(r**-n)
 
 #popt,pcov = curve_fit(VdW, R[100:], abs(out_egr1[100:]))
 #popt2,pcov = curve_fit(VdW, R[80:], abs(out_egr2[80:]))
@@ -252,14 +264,17 @@ from scipy.optimize import curve_fit
 #loglog(R, VdW(R, popt), R,abs(out_egr1))
 #loglog(R, VdW(R, popt2),R,abs(out_egr2))
 
-#popt,pcov = curve_fit(VdW, R[100:], abs(out_egr[:,index1][100:]))
-#popt2,pcov2 = curve_fit(VdW, R[100:], abs(out_egr[:,index2][100:]))
-#popt3,pcov3 = curve_fit(VdW, R[100:], abs(out_egr[:,index3][100:]))
-#popt4,pcov4 = curve_fit(VdW, R[100:], abs(out_egr[:,index4][100:]))
-popt1,pcov1 = curve_fit(VdW, R[100:], out_egr1[100:], p0=100)
-figure(4)
+from scipy.optimize import curve_fit
+
+offset, off_vec = np.linalg.eigh(EI + coef_F*(V_Stark1 + V_Stark2))
+offset = offset - pair_12.E_Zeeman*1e-9
+offset1 = offset[np.argmax(abs(off_vec[index1,:]))]
+popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
+figure(6)
 clf()
-loglog(R, abs(VdW(R, popt1)), R,abs(out_egr1))
+loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1))
+xlabel('$R (\mu$m)')
+ylabel('Rel. energy (GHz)')
 print(popt1)
 
 #popt3,pcov3 = curve_fit(VdW, R[100:], abs(out_egr3[100:]- pair_56.E_Zeeman+ pair_12.E_Zeeman))
@@ -268,21 +283,18 @@ if index2 != index1:
     out_egr2 = np.asarray([out_egr[i, out_coef[1,i]] for i in range(R_num)])
     figure(3)
     semilogx(R, out_egr2)
-    popt2,pcov2 = curve_fit(VdW, R[100:], out_egr2[100:], p0=100)
+    popt2,pcov2 = curve_fit(pow_fit, R[100:], out_egr2[100:], p0=(100,6))
     figure(4)
     loglog(R, abs(VdW(R, popt2)), R,abs(out_egr2))
     print(popt2)
-    #loglog(R, VdW(R, popt3), R,abs(out_egr[:,index3]))
-    #loglog(R, VdW(R, popt4), R,abs(out_egr[:,index4]))
+  
 
 
-#print(popt2*1e27)
-#print(popt3*1e27)
-#print(popt4*1e27)
 
-def pow_fit(r,C,n):
-    return C*(r**-n)
-popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:])
-figure(4)
-clf()
-loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1))
+
+
+#popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:])
+#figure(5)
+#clf()
+#loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1))
+#print(popt1)

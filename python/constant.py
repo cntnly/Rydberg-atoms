@@ -119,7 +119,7 @@ class Ryd_pair (object):
             pass
             
     def __repr__(self):
-        return '{0} and {1}\n'.format(self.atom1, self.atom2)
+        return '{0} and {1}'.format(self.atom1, self.atom2)
     def __eq__(self, other):
         return (self.atom1 == other.atom1) & (self.atom2 == other.atom2)
 def pair_invert(pair):

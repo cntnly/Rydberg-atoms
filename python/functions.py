@@ -86,14 +86,15 @@ def A_Int(pairAB, pairABp):
 
 
 def Search_VdW(N_list, Not_list, test_term, Choice, delta_n, l1, l2, delta_l, m1, m2, delta_m):
+    """
+    Search_VdW(N_list, Not_list, test_term, Choice, delta_n, l1, l2, delta_l, m1, m2, delta_m)
+    """
     up = False
     N_list_temp = []
     for lA in np.arange(max(0, l1-delta_l), l1+delta_l+0.1, 1):
         for lB in np.arange(max(0, l2-delta_l), l2+delta_l +0.1, 1):
             for jA in np.arange(np.abs(lA-0.5), lA+0.6, 1):
                 for jB in np.arange(np.abs(lB -0.5), lB +0.6, 1):
-                    #        ljA = choose_lj(lA, jA)
-                    #        ljB = choose_lj(lB, jB)
                     for mA in np.arange(m1 -delta_m, m1 +delta_m +0.1, 1):
                         if (-jA <= mA) & (mA <= jA):
                             for mB in np.arange(m2-delta_m, m2+delta_m +0.1,1):
@@ -110,8 +111,6 @@ def Search_VdW(N_list, Not_list, test_term, Choice, delta_n, l1, l2, delta_l, m1
                                                 nA = pair.atom1.n + switch_A*iA
                                                 if nA > lA:
                                                     atom_A = Ryd_atom(nA, lA, jA, mA)
-                                                    #                                         EA = En(nA, ljA)
-                                                    # search level for nB
                                                     switch_B = 1
                                                     iB = 0
                                                     while (iB <= delta_n) & (switch_B != 0):
@@ -141,3 +140,66 @@ def Search_VdW(N_list, Not_list, test_term, Choice, delta_n, l1, l2, delta_l, m1
         print('Should increase delta_n')
     return N_list_temp
     
+
+def Search_Stark(pair, Not_list, Choice_F, delta_n_max):
+    """
+    Search_Stark(pair, Not_list, Choice_F)
+    return list of pairs coupled with 'pair' but not in 'Not_list' stronger than '1/Choice_F' 
+    """
+    N_list_Stark = []
+    atom_1, atom_2 = pair.atom1, pair.atom2
+    l1, l2 = atom_1.l, atom_2.l
+    j1, j2 = atom_1.j, atom_2.j
+    m1, m2 = atom_1.m, atom_2.m
+
+    for lA in arange(np.abs(l1 -1), l1+1.1, 2):
+        for jA in arange(np.abs(j1-1), j1+1.1, 1):
+            if (jA >= np.abs(lA -0.5)) & (jA <= lA +0.5):
+                for mA in arange(m1 -1, m1 +1.1, 1):
+                    if (-jA <= mA) & (mA <= jA):
+                        atomA_temp = Ryd_atom(100, lA, jA, mA)
+                        A_Int_temp = A_Stark_atom(atom_1, atomA_temp)
+                        if A_Int_temp!=0:
+   #                         A_Int_temp *= coef_F
+                            #             if A_Int_temp != 0.:
+                            switch_A = 1
+                            iA = 0
+                            while (iA <= delta_n_max) & (switch_A != 0):
+                                nA = n1 + switch_A*iA
+                                if nA > lA:
+                                    atom_A = Ryd_atom(nA, lA, jA, mA)
+                                    if ((A_Int_temp*radinte_atom(atom_1, atom_A))**2)*Choice_F> np.abs(atom_1.En - atom_A.En):
+                                        pair_temp = Ryd_pair(atom_A, atom_2)                                    
+                                        if (pair_temp not in Not_list) & (pair_temp not in N_list_Stark):                                   
+                                            N_list_Stark.append(pair_temp)
+                                if iA == delta_n_max:
+                                    switch_A = -0.5* (switch_A + np.abs(switch_A))
+                                    iA = 0
+                                iA += 1 
+    for lB in arange(np.abs(l1 -1), l1+1.1, 2):
+        for jB in arange(np.abs(j1-1), j1+1.1, 1):
+            if (jB >= np.abs(lB -0.5)) & (jB <= lB +0.5):
+                for mB in arange(m1 -1, m1 +1.1, 1):
+                    if (-jB <= mB) & (mB <= jB):
+                        atomB_temp = Ryd_atom(100, lB, jB, mB)
+                        A_Int_temp = A_Stark_atom(atom_2, atomB_temp)
+                        if A_Int_temp!=0:
+   #                         A_Int_temp *= coef_F
+                            #             if A_Int_temp != 0.:
+                            switch_B = 1
+                            iB = 0
+                            while (iB <= delta_n_max) & (switch_B != 0):
+                                nB = n1 + switch_B*iB
+                                if nB > lB:
+                                    atom_B = Ryd_atom(nB, lB, jB, mB)
+         #                           print( (A_Int_temp*radinte_atom(atom_2, atom_B))**2)
+         #                           print(np.abs(atom_2.En - atom_B.En))
+                                    if ((A_Int_temp*radinte_atom(atom_2, atom_B))**2)*Choice_F> np.abs(atom_2.En - atom_B.En):
+                                        pair_temp = Ryd_pair(atom_1,atom_B)
+                                        if (pair_temp not in Not_list) & (pair_temp not in N_list_Stark):                                  
+                                            N_list_Stark.append(pair_temp)
+                                if iB == delta_n_max:
+                                    switch_B = -0.5* (switch_B + np.abs(switch_B))
+                                    iB = 0
+                                iB += 1 
+    return N_list_Stark
