@@ -3,11 +3,11 @@
 from __future__ import division
 from numpy import pi
 # Define levels
-n1 = 44
-l1 = 2
+n1 = 60
+l1 = 59
 s1 = 1/2
 j1 = l1 + 1/2
-m1 = 5/2
+m1 = j1
 n2 = 60
 l2 = 59     
 s2 =1/2
@@ -22,7 +22,7 @@ theta = 1*pi/2
 # Setup criterion
 delta_n_max = 6
 l_max = 2
-Choice = 1e6# cut off energy for 1st order term, in Hz
+Choice = 5e9# cut off energy for 1st order term, in Hz
 R_test = 1e-6
 Choice2 = 10* Choice
 

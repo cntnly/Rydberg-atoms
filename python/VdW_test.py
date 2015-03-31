@@ -101,10 +101,31 @@ print ('1st order terms: {0}'.format(len(N_list)))
 # Search for temp coupled by Stark effect
 N_list_Stark=[]
 Choice_F = (coef_F*coef_F)/Choice_F
-N_list_Stark = Search_Stark(pair_12, N_list, Choice_F, delta_n_max)
+for elm in N_list:
+    N_list_Stark_temp = Search_Stark(elm, N_list + N_list_Stark, Choice_F, delta_n_max)
+    N_list_Stark += N_list_Stark_temp
+
 print('1st order Stark terms: {0}'.format(len(N_list_Stark)))
 
 count_doub(N_list, N_list_Stark)
+
+#============= Create base 
+#for n in arange(atom_1.n -15, atom_1.n +16, 1):
+#    for l in arange(max(0, atom_1.l -3), min(atom_1.l +3.1,n),1):
+#        for j in arange(abs(l-0.5), l+0.6,1):
+#            for m in arange(-j, j+0.1,1):
+#                if abs(m -atom_1.m) <3:
+#                    try:
+#                        atom_temp = Ryd_atom(n,l,j,m)
+#                    except:
+#                        print(n, l,j,m)                            
+#                    if abs(atom_temp.En - atom_1.En) < 140e9:
+#                        if  atom_temp not in N_list:
+#                            N_list.append(atom_temp)
+#                            
+#                            
+#Union_list = N_list
+#=============================
 
 Union_list = N_list + N_list_Stark # sure that elements of N_list are not in N_list2
 for pair in Union_list:
@@ -240,11 +261,18 @@ figure(5)
 clf()
 #semilogx(R, out_egr1)
 #semilogx(R, out_egr2)
-semilogx(R, out_egr, R, out_egr1, '+')
+plot(R**-6, out_egr, R**-6, out_egr1, '+')
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 #semilogx(R, out_egr[:,index3])
 #semilogx(R, out_egr[:,index4])
+figure(7)
+clf()
+#semilogx(R, out_egr1)
+#semilogx(R, out_egr2)
+semilogx(R, out_egr, R, out_egr1, '+')
+xlabel('$R (\mu$m)')
+ylabel('Rel. energy (GHz)')
 
 #fit data
 def VdW(r,C):
@@ -267,7 +295,7 @@ offset1 = offset[np.argmax(abs(off_vec[index1,:]))]
 popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 figure(6)
 clf()
-loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1))
+loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), 'wo')
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 print(popt1)
@@ -280,7 +308,7 @@ if index2 != index1:
     semilogx(R, out_egr2)
     popt2,pcov2 = curve_fit(pow_fit, R[100:], out_egr2[100:], p0=(100,6))
     figure(4)
-    loglog(R, abs(VdW(R, popt2)), R,abs(out_egr2))
+    loglog(R, abs(VdW(R, popt2)), R,abs(out_egr2),'wo')
     print(popt2)
   
 
