@@ -203,3 +203,13 @@ def Search_Stark(pair, Not_list, Choice_F, delta_n_max):
                                     iB = 0
                                 iB += 1 
     return N_list_Stark
+    
+def count_doub(list1, list2):
+    """
+    Count how many doubled elements in two list
+    """
+    count =0
+    for elm in list1:
+        if elm in list2:
+            count +=1
+    return count

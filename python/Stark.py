@@ -37,6 +37,7 @@ except ImportError:
 coef_F = e*a_0/h
 Choice_F = (coef_F*coef_F)/Choice_F
 atom = Ryd_atom(n1, l1, j1, m1)
+print(atom)
 N_list = [atom]
 def Search_Stark_level(atom, Not_list, Choice, delta_n_max):
     n, l, j, m = atom.n,atom.l, atom.j, atom.m
@@ -74,8 +75,22 @@ for Atom in N_list:
     N_list_temp = Search_Stark_level(Atom, N_list + N_list2, Choice_F, delta_n_max)
     N_list2 += N_list_temp
 Union_list = N_list + N_list2
+
+#============= Create base 
+#for n in arange(atom.n -15, atom.n +16, 1):
+#    for l in arange(max(0, atom.l -3), atom.l +3,1):
+#        for j in arange(abs(l-0.5), l+0.6,1):
+#            for m in arange(-j, j+0.1,1):
+#                if abs(m -atom.m) <1:
+#                    atom_temp = Ryd_atom(n,l,j,m)
+#                    if abs(atom_temp.En - atom.En) < 140e9:
+#                        if  atom_temp not in N_list:
+#                            N_list.append(atom_temp)
+#Union_list = N_list
+#=============================
+
 Union_list = sorted(Union_list, key = lambda energy: energy.En)
-print('Union_list= {0}'.format(len(Union_list))                    )
+print('Union_list= {0}'.format(len(Union_list)) )
 figure(1)
 clf()
 plot([(elm.En - atom.En)*1e-9 for elm in Union_list],'-o')
@@ -137,12 +152,16 @@ out_egr1 = np.asarray([out_egr[i, out_coef[i]] for i in range(F_num)])
 figure(3)
 clf()
 plot(F, out_egr1, '+', F, out_egr)
+xlabel('F (V/cm)')
+ylabel('Rel. energy (MHz)')
 
 def fit_fun(F, A, offset):
     return A*F**2 + offset
 from scipy.optimize import curve_fit
-popt1,pcov1 = curve_fit(fit_fun, F[:50], out_egr1[:50])
+popt1,pcov1 = curve_fit(fit_fun, F[:100], out_egr1[:100])
 figure(4)
 clf()
-plot(F, out_egr1, F, fit_fun(F, *popt1))
-print('Coef = {0} MHz/(V/cm)**2'.format(popt1[0]))
+plot(F, out_egr1, 'wo', F, fit_fun(F, *popt1))
+xlabel('F (V/cm))')
+ylabel('Rel. energy (MHz)')
+print('Coef = {0} MHz/(V/cm)**2'.format(popt1[0]*2))

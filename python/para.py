@@ -3,11 +3,11 @@
 from __future__ import division
 from numpy import pi
 # Define levels
-n1 = 75
-l1 = 0
+n1 = 44
+l1 = 2
 s1 = 1/2
 j1 = l1 + 1/2
-m1 = j1
+m1 = 5/2
 n2 = 60
 l2 = 59     
 s2 =1/2
@@ -26,4 +26,4 @@ Choice = 1e6# cut off energy for 1st order term, in Hz
 R_test = 1e-6
 Choice2 = 10* Choice
 
-Choice_F = 1e-5 # cut off for Stark shift
+Choice_F = 1e2 # cut off for Stark shift

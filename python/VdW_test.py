@@ -87,12 +87,7 @@ print('Degenerated pairs ={0}'.format(len(N_list)))
 #Search 1st order coupling terms
 N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
 
-def count_doub(list1, list2):
-    count =0
-    for elm in list1:
-        if elm in list2:
-            count +=1
-    return count
+
 N_list += N_list1
 print ('N_list = {0}'.format(len(N_list)))
        
