@@ -239,15 +239,15 @@ else:
 #index4 = Union_list.index(pair_invert(pair_78))
 
 out_egr = np.empty((R_num, length))
-out_coef = np.empty((4,R_num))
-out_vector = np.empty((length, length))
+out_coef = np.empty((2,R_num))
+out_vector = np.empty((R_num,length, length))
 R = np.logspace(log10(R_min), log10(R_max), num = R_num)
 for i,elm in enumerate(R):
     #out_egr[i] = np.linalg.eigvalsh(EI + V_total* coef/(elm**3)) - pair_12.E_Zeeman
-    out_egr[i] , out_vector = np.linalg.eigh(EI + 1e18*V_total* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2))
+    out_egr[i] , out_vector[i] = np.linalg.eigh(EI + 1e18*V_total* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2))
     out_egr[i] = out_egr[i] - pair_12.E_Zeeman*1e-9
-    out_coef[0,i] = np.argmax(abs(out_vector[index1,:]))
-    out_coef[1,i] = np.argmax(abs(out_vector[index2,:]))
+    out_coef[0,i] = np.argmax(abs(out_vector[i][index1,:]))
+    out_coef[1,i] = np.argmax(abs(out_vector[i][index2,:]))
 #    out_coef[2,i] = np.argmax(abs(out_vector[index3,:]))
 #    out_coef[3,i] = np.argmax(abs(out_vector[index4,:]))
 
@@ -266,7 +266,7 @@ xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 #semilogx(R, out_egr[:,index3])
 #semilogx(R, out_egr[:,index4])
-figure(7)
+figure(8)
 clf()
 #semilogx(R, out_egr1)
 #semilogx(R, out_egr2)
@@ -292,6 +292,8 @@ from scipy.optimize import curve_fit
 offset, off_vec = np.linalg.eigh(EI + coef_F*(V_Stark1 + V_Stark2))
 offset = offset - pair_12.E_Zeeman*1e-9
 offset1 = offset[np.argmax(abs(off_vec[index1,:]))]
+offset2 = offset[np.argmax(abs(off_vec[index2,:]))]
+
 popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 figure(6)
 clf()
@@ -304,11 +306,11 @@ print(popt1)
 #popt4,pcov4 = curve_fit(VdW, R[100:], abs(out_egr4[100:]- pair_78.E_Zeeman+ pair_12.E_Zeeman))
 if index2 != index1:
     out_egr2 = np.asarray([out_egr[i, out_coef[1,i]] for i in range(R_num)])
-    figure(3)
-    semilogx(R, out_egr2)
+    figure(8)
+    semilogx(R, out_egr2, 'wo')
     popt2,pcov2 = curve_fit(pow_fit, R[100:], out_egr2[100:], p0=(100,6))
-    figure(4)
-    loglog(R, abs(VdW(R, popt2)), R,abs(out_egr2),'wo')
+    figure(6)
+    loglog(R, abs(pow_fit(R, *popt2)), R,abs(out_egr2-offset2),'wo')
     print(popt2)
   
 
