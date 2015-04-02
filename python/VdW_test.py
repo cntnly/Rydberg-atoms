@@ -144,6 +144,7 @@ Union_list = sorted(Union_list, key = lambda energy: energy.E_Zeeman)
 print(len(Union_list))                    
 figure(1)
 clf()
+subplot(2,2,1)
 plot([(elm.E_Zeeman - pair_12.E_Zeeman)*1e-9 for elm in Union_list],'-o')
 xlabel('List N°')
 ylabel('Rel. energy (GHz)')
@@ -189,8 +190,8 @@ V_total[V_A!=0] = V_R[V_A!=0]*V_A[V_A!=0]
 V_total = V_total + V_total.T - np.diag(V_total.diagonal())
 V_total = V_total*1e-9 # convert to GHz.m^3
 
-figure(2)
-clf()
+figure(1)
+subplot(2,2,2)
 imshow(V_total,)
 colorbar()
 
@@ -203,8 +204,7 @@ if len(V_A[V_A!=0])!=0:
     V_Stark1[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
     V_Stark1 = V_Stark1 + V_Stark1.T - np.diag(V_Stark1.diagonal())
     V_Stark1 = V_Stark1*1e-9
-figure(3)
-clf()
+subplot(2,2,3)
 imshow(V_Stark1)
 colorbar()
 
@@ -217,8 +217,7 @@ if len(V_A[V_A!=0])!=0:
     V_Stark2[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
     V_Stark2 = V_Stark2 + V_Stark2.T - np.diag(V_Stark2.diagonal())
     V_Stark2 = V_Stark2*1e-9
-figure(4)
-clf()
+subplot(2,2,4)
 imshow(V_Stark2)
 colorbar()
 
@@ -280,7 +279,7 @@ out_egr2 = [out_egr[i, out_coef[1,i]] for i in range(R_num)]
 
 
 
-figure(5)
+figure(2)
 clf()
 #semilogx(R, out_egr1)
 #semilogx(R, out_egr2)
@@ -289,7 +288,7 @@ xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 #semilogx(R, out_egr[:,index3])
 #semilogx(R, out_egr[:,index4])
-figure(7)
+figure(3)
 clf()
 #semilogx(R, out_egr1)
 #semilogx(R, out_egr2)
@@ -318,22 +317,24 @@ offset1 = offset[np.argmax(abs(off_vec[index1,:]))]
 offset2 = offset[np.argmax(abs(off_vec[index2,:]))]
 
 popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
-figure(6)
+figure(4)
 clf()
 loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
-print(popt1)
+print('power fit = {0}'.format(popt1))
+print('R_1 MHz = {0} um'.format(R[np.max(np.where(abs(out_egr1-offset1)>1e-3))]))
+
 
 #popt3,pcov3 = curve_fit(VdW, R[100:], abs(out_egr3[100:]- pair_56.E_Zeeman+ pair_12.E_Zeeman))
 #popt4,pcov4 = curve_fit(VdW, R[100:], abs(out_egr4[100:]- pair_78.E_Zeeman+ pair_12.E_Zeeman))
 if index2 != index1:
   #  out_egr2 = np.asarray([out_egr[i, out_coef[1,i]] for i in range(R_num)])
     #out_egr2 = out_egr[:, index2]
-    figure(7)
+    figure(3)
     semilogx(R, out_egr2, 'wo')
     popt2,pcov2 = curve_fit(pow_fit, R[100:], out_egr2[100:], p0=(100,6))
-    figure(6)
+    figure(4)
     loglog(R, abs(pow_fit(R, *popt2)), R,abs(out_egr2-offset2),'wo')
     print(popt2)
   

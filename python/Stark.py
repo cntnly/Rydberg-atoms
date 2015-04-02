@@ -160,9 +160,11 @@ def fit_fun(F, A,n, offset):
     return A*F**n + offset
 from scipy.optimize import curve_fit
 popt1,pcov1 = curve_fit(fit_fun, F[:100], out_egr1[:100], p0=(1, 2, 0))
-figure(4)
+figure(5)
 clf()
 plot(F, out_egr1, 'wo', F, fit_fun(F, *popt1))
 xlabel('F (V/cm))')
 ylabel('Rel. energy (MHz)')
+#title('Stark shift for {atm}, Coef = {coef}'.format(atm =atom, coef = popt1[0]))
+text(0.8, 0, '{atm} \n $\Delta E = {A:10.2f}\\times F^{{\;{n:10.2f}}} $ MHz/(V/cm)${{}}^{{{n:0.2f}}}$'.format(atm =atom, A = popt1[0], n = popt1[1]),  fontsize=14, verticalalignment='center')
 print('Coef = {a} MHz/(V/cm)**{b}'.format(a= popt1[0], b = popt1[1]))
