@@ -42,7 +42,6 @@ pair_78 =Ryd_pair(Ryd_atom(n1,l1,j1,-m1),Ryd_atom(n2, l2, j2, m2))
 
 
 coef = a_0*a_0*e*e/(4*np.pi*epsilon_0*h)
-coef_F = Ffield*e*a_0/h
 test_term = coef/(R_test**3)
 test_term = test_term*test_term
 
@@ -51,6 +50,7 @@ print('theta = {0} deg'.format(theta*180/pi))
 print('B_field = {0} G'.format(Bfield*1e4))
 print('F_field = {0} V/cm'.format(Ffield))
 Ffield = Ffield*100 # V/m
+coef_F = Ffield*e*a_0/h
 
 #check degeneracy
 N_list = [pair_12]
@@ -81,7 +81,7 @@ for lA in np.arange(max(l1-2, 0), l1+2.1,1):
                                                         pair_temp = Ryd_pair(atomA_temp, atomB_temp)
                                                         if pair_temp not in N_list:
                                                             N_list.append(pair_temp)
-                
+deg=len(N_list)
 print('Degenerated pairs ={0}'.format(len(N_list)))
 
 #Search 1st order coupling terms
@@ -248,25 +248,48 @@ for i,elm in enumerate(R):
     out_egr[i] = out_egr[i] - pair_12.E_Zeeman*1e-9
     out_coef[0,i] = np.argmax(abs(out_vector[i][index1,:]))
     out_coef[1,i] = np.argmax(abs(out_vector[i][index2,:]))
-#    out_coef[2,i] = np.argmax(abs(out_vector[index3,:]))
-#    out_coef[3,i] = np.argmax(abs(out_vector[index4,:]))
 
+#    idx = index1
+#    coef_idx = np.where(np.argmax(abs(out_vector[i]), axis=0)== idx)
+#    if len(coef_idx[0]) !=0:
+#        out_coef[0,i] = coef_idx[0][np.argmin(abs(coef_idx[0]-idx))]
+#    if len(coef_idx[0]) == 0:
+#        while len(coef_idx[0]) == 0:
+#            idx -= 1
+#            coef_idx = np.where(np.argmax(abs(out_vector[i]), axis=0)== idx)
+#        out_coef[0,i] = coef_idx[0][0]
+#    idx = index2
+#    coef_idx = np.where(np.argmax(abs(out_vector[i]), axis=0)== idx)
+#    if len(coef_idx[0]) !=0:
+#        out_coef[1,i] = coef_idx[0][np.argmin(abs(coef_idx[0]-idx))]
+#    if len(coef_idx[0]) == 0:
+#        while len(coef_idx[0]) == 0:
+#            idx -= 1
+#            coef_idx = np.where(np.argmax(abs(out_vector[i]), axis=0)== idx)
+#        out_coef[1,i] = coef_idx[0][0]
+        
+#if deg >1:
+#    out_egr1 = out_egr[:,out_coef[0,R_num-1]]
+#    out_egr2 = out_egr[:,out_coef[1,R_num-1]]
+#else:
+#    out_egr1 = out_egr[:, index1]
+#    out_egr2 = out_egr[:, index2]
+    
+out_egr1 = [out_egr[i, out_coef[0,i]] for i in range(R_num)]
+out_egr2 = [out_egr[i, out_coef[1,i]] for i in range(R_num)]
 
-out_egr1 = np.asarray([out_egr[i, out_coef[0,i]] for i in range(R_num)])
-#out_egr3 = np.asarray([out_egr[i, out_coef[2,i]] for i in range(R_num)])
-#out_egr4 = np.asarray([out_egr[i, out_coef[3,i]] for i in range(R_num)])
 
 
 figure(5)
 clf()
 #semilogx(R, out_egr1)
 #semilogx(R, out_egr2)
-plot(R**-6, out_egr, R**-6, out_egr1, '+')
+loglog(R, abs(asarray(out_egr)-out_egr1[-1]), R, abs(asarray(out_egr1)-out_egr1[-1]), '+')
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 #semilogx(R, out_egr[:,index3])
 #semilogx(R, out_egr[:,index4])
-figure(8)
+figure(7)
 clf()
 #semilogx(R, out_egr1)
 #semilogx(R, out_egr2)
@@ -297,7 +320,7 @@ offset2 = offset[np.argmax(abs(off_vec[index2,:]))]
 popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 figure(6)
 clf()
-loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), 'wo')
+loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 print(popt1)
@@ -305,8 +328,9 @@ print(popt1)
 #popt3,pcov3 = curve_fit(VdW, R[100:], abs(out_egr3[100:]- pair_56.E_Zeeman+ pair_12.E_Zeeman))
 #popt4,pcov4 = curve_fit(VdW, R[100:], abs(out_egr4[100:]- pair_78.E_Zeeman+ pair_12.E_Zeeman))
 if index2 != index1:
-    out_egr2 = np.asarray([out_egr[i, out_coef[1,i]] for i in range(R_num)])
-    figure(8)
+  #  out_egr2 = np.asarray([out_egr[i, out_coef[1,i]] for i in range(R_num)])
+    #out_egr2 = out_egr[:, index2]
+    figure(7)
     semilogx(R, out_egr2, 'wo')
     popt2,pcov2 = curve_fit(pow_fit, R[100:], out_egr2[100:], p0=(100,6))
     figure(6)

@@ -66,27 +66,27 @@ def Search_Stark_level(atom, Not_list, Choice, delta_n_max):
                                    iA = 0
                                 iA += 1 
     return N_list
-#N_list1= Search_Stark_level(atom, [], Choice_F, delta_n_max)
-#print('N_list1 = {0}'.format(len(N_list1)))
-#count_doub(N_list, N_list1)
-#N_list += N_list1
-#N_list2 = []
-#for Atom in N_list:
-#    N_list_temp = Search_Stark_level(Atom, N_list + N_list2, Choice_F, delta_n_max)
-#    N_list2 += N_list_temp
-#Union_list = N_list + N_list2
+N_list1= Search_Stark_level(atom, [], Choice_F, delta_n_max)
+print('N_list1 = {0}'.format(len(N_list1)))
+count_doub(N_list, N_list1)
+N_list += N_list1
+N_list2 = []
+for Atom in N_list:
+    N_list_temp = Search_Stark_level(Atom, N_list + N_list2, Choice_F, delta_n_max)
+    N_list2 += N_list_temp
+Union_list = N_list + N_list2
 
 #============= Create base 
-for n in arange(atom.n -15, atom.n +16, 1):
-    for l in arange(max(0, atom.l -3), min(n,atom.l +3),1):
-        for j in arange(abs(l-0.5), l+0.6,1):
-            for m in arange(-j, j+0.1,1):
-                if abs(m -atom.m) <3:
-                    atom_temp = Ryd_atom(n,l,j,m)
-                    if abs(atom_temp.En - atom.En) < 140e9:
-                        if  atom_temp not in N_list:
-                            N_list.append(atom_temp)
-Union_list = N_list
+#for n in arange(atom.n -15, atom.n +16, 1):
+#    for l in arange(max(0, atom.l -6), min(n,atom.l +6),1):
+#        for j in arange(abs(l-0.5), l+0.6,1):
+#            for m in arange(-j, j+0.1,1):
+#                if abs(m -atom.m) <1:
+#                    atom_temp = Ryd_atom(n,l,j,m)
+#                    if abs(atom_temp.En - atom.En) < 140e9:
+#                        if  atom_temp not in N_list:
+#                            N_list.append(atom_temp)
+#Union_list = N_list
 #=============================
 
 Union_list = sorted(Union_list, key = lambda energy: energy.En)
@@ -134,7 +134,7 @@ F_num = 200 # step in linear
 index = Union_list.index(atom)
 
 # Zero-th Energy
-EI = np.diag(np.asarray([elm.En for elm in Union_list]))*1e-6
+EI = np.diag(np.asarray([elm.E_Zeeman for elm in Union_list]))*1e-6
 
 
 out_egr = np.empty((F_num, length))
@@ -145,9 +145,10 @@ for i,elm in enumerate(F*100):
     #out_egr[i] = np.linalg.eigvalsh(EI + V_total* coef/(elm**3)) - pair_12.E_Zeeman
     out_egr[i] , out_vector[i] = np.linalg.eigh(EI + elm*coef_F*V_Stark )
     out_egr[i] = out_egr[i] - atom.En*1e-6
-    out_coef[i] = np.argmax(abs(out_vector[i][index,:]))
+    out_coef[i] = np.argmax(abs(out_vector[i][:,index]))
 
 out_egr1 = np.asarray([out_egr[i, out_coef[i]] for i in range(F_num)])
+out_egr1 = out_egr[:, index]
 
 figure(3)
 clf()
@@ -158,7 +159,7 @@ ylabel('Rel. energy (MHz)')
 def fit_fun(F, A,n, offset):
     return A*F**n + offset
 from scipy.optimize import curve_fit
-popt1,pcov1 = curve_fit(fit_fun, F[:100], out_egr1[:100])
+popt1,pcov1 = curve_fit(fit_fun, F[:100], out_egr1[:100], p0=(1, 2, 0))
 figure(4)
 clf()
 plot(F, out_egr1, 'wo', F, fit_fun(F, *popt1))

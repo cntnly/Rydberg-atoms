@@ -12,12 +12,14 @@ from libc.math cimport exp, sqrt, pow
 def radinte(double E1, double L1, double E2, double L2, double I, double H = 0.01):
     """
     radinte(double E1, double L1, double E2, double L2, double I, double H = 0.01)
-	calculate Numerov integration for two states <E1,L1| R**I|E2,L2> with logarithm step H (default 0.01)
-	radinte(E1, L1, E2, L2, I, H = 0.01)    """
+	Calculate Numerov integration for two states <E1,L1| R**I|E2,L2> with square root step H (default 0.01)
+	Test formula
+	<n,l | r| n, l-1> = 3/2n Sqrt[n^2-l^2]
+	"""
 	
 	
-    cdef double AL1 = (2*L1 + 0.5)*(2*L1 + 0.5)
-    cdef double AL2 = (2*L2 + 0.5)*(2*L2 + 0.5)
+    cdef double AL1 = (2*L1 + 0.5)*(2*L1 + 1.5)
+    cdef double AL2 = (2*L2 + 0.5)*(2*L2 + 1.5)
     cdef double EE1 = -2. * E1
     cdef double EE2 = -2. * E2
     cdef double R01 = sqrt(1./EE1)
@@ -25,7 +27,6 @@ def radinte(double E1, double L1, double E2, double L2, double I, double H = 0.0
     R01 = R01*2.*(R01 + 15.)
     R02 = R02*2.*(R02 + 15.)
     
- #   cdef double DR = exp(H)
     cdef double C1 = 12./H/H
     cdef double C2 = 2.*C1
     cdef double C3 = 10.
