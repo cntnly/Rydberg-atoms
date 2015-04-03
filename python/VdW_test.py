@@ -85,7 +85,7 @@ deg=len(N_list)
 print('Degenerated pairs ={0}'.format(len(N_list)))
 
 #Search 1st order coupling terms
-N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3, spin_flip = False)
+N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
 
 
 N_list += N_list1
@@ -102,7 +102,7 @@ print ('1st order terms: {0}'.format(len(N_list)))
 N_list_Stark=[]
 Choice_F = (coef_F*coef_F)/Choice_F
 for elm in N_list:
-    N_list_Stark_temp = Search_Stark(elm, N_list + N_list_Stark, Choice_F, delta_n_max, True)
+    N_list_Stark_temp = Search_Stark(elm, N_list + N_list_Stark, Choice_F, delta_n_max)
     N_list_Stark += N_list_Stark_temp
 
 print('1st order Stark terms: {0}'.format(len(N_list_Stark)))
