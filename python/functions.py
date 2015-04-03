@@ -85,7 +85,7 @@ def A_Int(pairAB, pairABp):
     return A_Integral(pairAB.atom1.l, pairAB.atom1.j, pairAB.atom1.m, pairAB.atom2.l, pairAB.atom2.j, pairAB.atom2.m, pairABp.atom1.l, pairABp.atom1.j, pairABp.atom1.m, pairABp.atom2.l, pairABp.atom2.j, pairABp.atom2.m, theta)
 
 
-def Search_VdW(N_list, Not_list, test_term, Choice, delta_n, l1, l2, delta_l, m1, m2, delta_m):
+def Search_VdW(N_list, Not_list, test_term, Choice, delta_n, l1, l2, delta_l, m1, m2, delta_m, spin_flip = True):
     """
     Search_VdW(N_list, Not_list, test_term, Choice, delta_n, l1, l2, delta_l, m1, m2, delta_m)
     """
@@ -93,12 +93,12 @@ def Search_VdW(N_list, Not_list, test_term, Choice, delta_n, l1, l2, delta_l, m1
     N_list_temp = []
     for lA in np.arange(max(0, l1-delta_l), l1+delta_l+0.1, 1):
         for lB in np.arange(max(0, l2-delta_l), l2+delta_l +0.1, 1):
-            for jA in np.arange(np.abs(lA-0.5), lA+0.6, 1):
+            for jA in np.arange(np.abs(lA -0.5), lA+0.6, 1):
                 for jB in np.arange(np.abs(lB -0.5), lB +0.6, 1):
                     for mA in np.arange(m1 -delta_m, m1 +delta_m +0.1, 1):
-                        if (-jA <= mA) & (mA <= jA):
+                        if ((spin_flip and (-jA <= mA)) or (-jA +.5 <= mA)) & (mA <= jA):
                             for mB in np.arange(m2-delta_m, m2+delta_m +0.1,1):
-                                if (-jB <= mB) & (mB <= jB):
+                                if ((spin_flip and (-jB <= mB)) or (-jB +.5 <= mB)) & (mB <= jB):
                                     atomA_temp = Ryd_atom(100, lA, jA, mA)
                                     atomB_temp = Ryd_atom(100, lB, jB, mB)
                                     pair_AB_temp = Ryd_pair(atomA_temp, atomB_temp)
@@ -141,7 +141,7 @@ def Search_VdW(N_list, Not_list, test_term, Choice, delta_n, l1, l2, delta_l, m1
     return N_list_temp
     
 
-def Search_Stark(pair, Not_list, Choice_F, delta_n_max):
+def Search_Stark(pair, Not_list, Choice_F, delta_n_max, spin_flip =True):
     """
     Search_Stark(pair, Not_list, Choice_F)
     return list of pairs coupled with 'pair' but not in 'Not_list' stronger than '1/Choice_F' 
@@ -156,7 +156,7 @@ def Search_Stark(pair, Not_list, Choice_F, delta_n_max):
         for jA in arange(np.abs(j1-1), j1+1.1, 1):
             if (jA >= np.abs(lA -0.5)) & (jA <= lA +0.5):
                 for mA in arange(m1 -1, m1 +1.1, 1):
-                    if (-jA <= mA) & (mA <= jA):
+                    if ((spin_flip and (-jA <= mA)) or (-jA +.5 <= mA)) & (mA <= jA):
                         atomA_temp = Ryd_atom(100, lA, jA, mA)
                         A_Int_temp = A_Stark_atom(atom_1, atomA_temp)
                         if A_Int_temp!=0:
@@ -180,7 +180,7 @@ def Search_Stark(pair, Not_list, Choice_F, delta_n_max):
         for jB in arange(np.abs(j1-1), j1+1.1, 1):
             if (jB >= np.abs(lB -0.5)) & (jB <= lB +0.5):
                 for mB in arange(m1 -1, m1 +1.1, 1):
-                    if (-jB <= mB) & (mB <= jB):
+                    if ((spin_flip and (-jB <= mB)) or (-jB +.5 <= mB)) & (mB <= jB):
                         atomB_temp = Ryd_atom(100, lB, jB, mB)
                         A_Int_temp = A_Stark_atom(atom_2, atomB_temp)
                         if A_Int_temp!=0:
