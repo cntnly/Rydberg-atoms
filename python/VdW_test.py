@@ -33,13 +33,9 @@ except ImportError:
 
 
 # Calculate Energy
-atom_1 = Ryd_atom(n1, l1, j1, m1)
-atom_2 = Ryd_atom(n2, l2, j2, m2)
+atom_1 = Ryd_atom(n1, l1, m1)
+atom_2 = Ryd_atom(n2, l2, m2)
 pair_12 = Ryd_pair(atom_1, atom_2)
-pair_34 =Ryd_pair(Ryd_atom(n1,l1,j1,-m1),Ryd_atom(n2, l2, j2, -m2))
-pair_56 =Ryd_pair(Ryd_atom(n1,l1,j1,m1),Ryd_atom(n2, l2, j2, -m2))
-pair_78 =Ryd_pair(Ryd_atom(n1,l1,j1,-m1),Ryd_atom(n2, l2, j2, m2))
-
 
 coef = a_0*a_0*e*e/(4*np.pi*epsilon_0*h)
 test_term = coef/(R_test**3)
@@ -56,31 +52,26 @@ coef_F = Ffield*e*a_0/h
 N_list = [pair_12]
 for lA in np.arange(max(l1-2, 0), l1+2.1,1):
     if lA < n1:
-        for jA in np.arange(max(j1- 2, 0.5), j1 + 2.1,1):
-            if (jA >= np.abs( lA - 0.5)) & (jA <= lA + 0.5):
-                for mA in np.arange(m1-2, m1+ 2.1,1):
-                    if np.abs(mA) <= jA:                 
-                        try:
-                            atomA_temp = Ryd_atom(n1, lA, jA, mA)
-                        except Exception:
-                            print(lA, jA, mA)
-                        if np.abs(atomA_temp.E_Zeeman - atom_1.E_Zeeman) < 1e-10:
-                            #print (atomA_temp)
-                            for lB in np.arange(max(l2-2, 0), l2+2.1):
-                                if lB < n2:
-                                    for jB in np.arange(max(j2- 2, 0.5), j2 + 2.1):
-                                        if (jB >= np.abs(lB - 0.5)) & (jB <= lB + 0.5):
-                                            for mB in np.arange(m2-2, m2+ 2.1):
-                                                if np.abs(mB) <= jB:
-                                                    try:
-                                                        atomB_temp = Ryd_atom(n2, lB, jB, mB)
-                                                    except Exception:
-                                                        print (lB, jB, mB)
-                                                    if np.abs(atomB_temp.E_Zeeman - atom_2.E_Zeeman) < 1e-10:
-                                                        #print (atomB_temp)
-                                                        pair_temp = Ryd_pair(atomA_temp, atomB_temp)
-                                                        if pair_temp not in N_list:
-                                                            N_list.append(pair_temp)
+        for mA in np.arange(m1-2, m1+ 2.1,1):
+            if np.abs(mA) <= lA:                 
+                try:
+                    atomA_temp = Ryd_atom(n1, lA, mA)
+                except Exception:
+                    print(lA, mA)
+                if np.abs(atomA_temp.E_Zeeman - atom_1.E_Zeeman) < 1e-10:
+                    for lB in np.arange(max(l2-2, 0), l2+2.1):
+                        if lB < n2:
+                            for mB in np.arange(m2-2, m2+ 2.1):
+                                if np.abs(mB) <= lB:
+                                    try:
+                                        atomB_temp = Ryd_atom(n2, lB, mB)
+                                    except Exception:
+                                        print (lB, mB)
+                                    if np.abs(atomB_temp.E_Zeeman - atom_2.E_Zeeman) < 1e-10:
+                                        #print (atomB_temp)
+                                        pair_temp = Ryd_pair(atomA_temp, atomB_temp)
+                                        if pair_temp not in N_list:
+                                            N_list.append(pair_temp)
 deg=len(N_list)
 print('Degenerated pairs ={0}'.format(len(N_list)))
 
@@ -164,25 +155,23 @@ rad_vec = np.vectorize(radinte)
 A_vec = np.vectorize(A_Integral)
 A_Stark_vec = np.vectorize(A_Stark)
 
-V_row = np.asarray([(elm.atom1.n, elm.atom1.l, elm.atom1.j, elm.atom1.m, elm.atom1.E_radinte, elm.atom2.n, elm.atom2.l, elm.atom2.j, elm.atom2.m, elm.atom2.E_radinte) for elm in Union_list])
+V_row = np.asarray([(elm.atom1.n, elm.atom1.l, elm.atom1.m, elm.atom1.E_radinte, elm.atom2.n, elm.atom2.l, elm.atom2.m, elm.atom2.E_radinte) for elm in Union_list])
 Pair1_n1, Pair2_n1 = meshgrid(V_row[:,0],V_row[:,0])
 Pair1_l1, Pair2_l1 = meshgrid(V_row[:,1],V_row[:,1])
-Pair1_j1, Pair2_j1 = meshgrid(V_row[:,2],V_row[:,2])
-Pair1_m1, Pair2_m1 = meshgrid(V_row[:,3],V_row[:,3])
-Pair1_Erad1, Pair2_Erad1 = meshgrid(V_row[:,4],V_row[:,4])
-Pair1_n2, Pair2_n2 = meshgrid(V_row[:,5],V_row[:,5])
-Pair1_l2, Pair2_l2 = meshgrid(V_row[:,6],V_row[:,6])
-Pair1_j2, Pair2_j2 = meshgrid(V_row[:,7],V_row[:,7])
-Pair1_m2, Pair2_m2 = meshgrid(V_row[:,8],V_row[:,8])
-Pair1_Erad2, Pair2_Erad2 = meshgrid(V_row[:,9],V_row[:,9])
+Pair1_m1, Pair2_m1 = meshgrid(V_row[:,2],V_row[:,2])
+Pair1_Erad1, Pair2_Erad1 = meshgrid(V_row[:,3],V_row[:,3])
+Pair1_n2, Pair2_n2 = meshgrid(V_row[:,4],V_row[:,4])
+Pair1_l2, Pair2_l2 = meshgrid(V_row[:,5],V_row[:,5])
+Pair1_m2, Pair2_m2 = meshgrid(V_row[:,6],V_row[:,6])
+Pair1_Erad2, Pair2_Erad2 = meshgrid(V_row[:,7],V_row[:,7])
 
 # Saving memory
-Pair1_n1, Pair1_l1, Pair1_j1, Pair1_m1, Pair1_Erad1 = Pair1_n1[mask1], Pair1_l1[mask1], Pair1_j1[mask1], Pair1_m1[mask1], Pair1_Erad1[mask1]
-Pair1_n2, Pair1_l2, Pair1_j2, Pair1_m2, Pair1_Erad2 = Pair1_n2[mask1], Pair1_l2[mask1], Pair1_j2[mask1], Pair1_m2[mask1], Pair1_Erad2[mask1]
-Pair2_n1, Pair2_l1, Pair2_j1, Pair2_m1, Pair2_Erad1 = Pair2_n1[mask1], Pair2_l1[mask1], Pair2_j1[mask1], Pair2_m1[mask1], Pair2_Erad1[mask1]
-Pair2_n2, Pair2_l2, Pair2_j2, Pair2_m2, Pair2_Erad2 = Pair2_n2[mask1], Pair2_l2[mask1], Pair2_j2[mask1], Pair2_m2[mask1], Pair2_Erad2[mask1]
+Pair1_n1, Pair1_l1, Pair1_m1, Pair1_Erad1 = Pair1_n1[mask1], Pair1_l1[mask1], Pair1_m1[mask1], Pair1_Erad1[mask1]
+Pair1_n2, Pair1_l2, Pair1_m2, Pair1_Erad2 = Pair1_n2[mask1], Pair1_l2[mask1], Pair1_m2[mask1], Pair1_Erad2[mask1]
+Pair2_n1, Pair2_l1, Pair2_m1, Pair2_Erad1 = Pair2_n1[mask1], Pair2_l1[mask1], Pair2_m1[mask1], Pair2_Erad1[mask1]
+Pair2_n2, Pair2_l2, Pair2_m2, Pair2_Erad2 = Pair2_n2[mask1], Pair2_l2[mask1], Pair2_m2[mask1], Pair2_Erad2[mask1]
 
-V_A[mask1] = A_vec(Pair1_l1, Pair1_j1, Pair1_m1, Pair1_l2, Pair1_j2, Pair1_m2, Pair2_l1, Pair2_j1, Pair2_m1, Pair2_l2, Pair2_j2, Pair2_m2, theta)
+V_A[mask1] = A_vec(Pair1_l1, Pair1_m1, Pair1_l2, Pair1_m2, Pair2_l1, Pair2_m1, Pair2_l2, Pair2_m2, theta)
 # Choose only elements different from 0
 mask2 = V_A[mask1] !=0
 V_R[V_A!=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)*rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
@@ -197,7 +186,7 @@ colorbar()
 
 V_R = np.zeros_like(V_total)
 V_A = np.zeros_like(V_total)
-V_A[mask1] = A_Stark_vec(Pair1_l1, Pair1_j1, Pair1_m1, Pair2_l1, Pair2_j1, Pair2_m1)*(Pair1_n2 == Pair2_n2) *(Pair1_l2 == Pair2_l2)*(Pair1_j2 == Pair2_j2)*(Pair1_m2 == Pair2_m2)
+V_A[mask1] = A_Stark_vec(Pair1_l1, Pair1_m1, Pair2_l1, Pair2_m1)*(Pair1_n2 == Pair2_n2) *(Pair1_l2 == Pair2_l2)*(Pair1_m2 == Pair2_m2)
 mask2 = V_A[mask1] !=0
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)
@@ -210,7 +199,7 @@ colorbar()
 
 V_R = np.zeros_like(V_total)
 V_A = np.zeros_like(V_total)
-V_A[mask1] = A_Stark_vec(Pair1_l2, Pair1_j2, Pair1_m2, Pair2_l2, Pair2_j2, Pair2_m2)*(Pair1_n1 == Pair2_n1) *(Pair1_l1 == Pair2_l1)*(Pair1_j1 == Pair2_j1)*(Pair1_m1 == Pair2_m1)
+V_A[mask1] = A_Stark_vec(Pair1_l2, Pair1_m2, Pair2_l2, Pair2_m2)*(Pair1_n1 == Pair2_n1) *(Pair1_l1 == Pair2_l1)*(Pair1_m1 == Pair2_m1)
 mask2 = V_A[mask1] !=0
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
@@ -246,33 +235,10 @@ for i,elm in enumerate(R):
     out_egr[i] , out_vector[i] = np.linalg.eigh(EI + 1e18*V_total* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2))
     out_egr[i] = out_egr[i] - pair_12.E_Zeeman*1e-9
     out_coef[0,i] = np.argmax(abs(out_vector[i][index1,:]))
-    out_coef[1,i] = np.argmax(abs(out_vector[i][index2,:]))
+    out_coef[1,i] = np.argmax(abs(np.delete(out_vector[i][index2,:],out_coef[0,i])))
+    if out_coef[1, i] >= out_coef[0,i]:
+        out_coef[1,i] +=1
 
-#    idx = index1
-#    coef_idx = np.where(np.argmax(abs(out_vector[i]), axis=0)== idx)
-#    if len(coef_idx[0]) !=0:
-#        out_coef[0,i] = coef_idx[0][np.argmin(abs(coef_idx[0]-idx))]
-#    if len(coef_idx[0]) == 0:
-#        while len(coef_idx[0]) == 0:
-#            idx -= 1
-#            coef_idx = np.where(np.argmax(abs(out_vector[i]), axis=0)== idx)
-#        out_coef[0,i] = coef_idx[0][0]
-#    idx = index2
-#    coef_idx = np.where(np.argmax(abs(out_vector[i]), axis=0)== idx)
-#    if len(coef_idx[0]) !=0:
-#        out_coef[1,i] = coef_idx[0][np.argmin(abs(coef_idx[0]-idx))]
-#    if len(coef_idx[0]) == 0:
-#        while len(coef_idx[0]) == 0:
-#            idx -= 1
-#            coef_idx = np.where(np.argmax(abs(out_vector[i]), axis=0)== idx)
-#        out_coef[1,i] = coef_idx[0][0]
-        
-#if deg >1:
-#    out_egr1 = out_egr[:,out_coef[0,R_num-1]]
-#    out_egr2 = out_egr[:,out_coef[1,R_num-1]]
-#else:
-#    out_egr1 = out_egr[:, index1]
-#    out_egr2 = out_egr[:, index2]
     
 out_egr1 = [out_egr[i, out_coef[0,i]] for i in range(R_num)]
 out_egr2 = [out_egr[i, out_coef[1,i]] for i in range(R_num)]
@@ -286,6 +252,8 @@ clf()
 loglog(R, asarray(out_egr), R, asarray(out_egr1), '+')
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
+figure(5);clf()
+loglog(R, -asarray(out_egr), R, -asarray(out_egr1), '+')
 #semilogx(R, out_egr[:,index3])
 #semilogx(R, out_egr[:,index4])
 figure(3)
@@ -313,8 +281,12 @@ from scipy.optimize import curve_fit
 
 offset, off_vec = np.linalg.eigh(EI + coef_F*(V_Stark1 + V_Stark2))
 offset = offset - pair_12.E_Zeeman*1e-9
-offset1 = offset[np.argmax(abs(off_vec[index1,:]))]
-offset2 = offset[np.argmax(abs(off_vec[index2,:]))]
+i = np.argmax(abs(off_vec[index1,:]))
+offset1 = offset[i]
+k = np.argmax(abs(np.delete(off_vec[index2,:], i)))
+if k >= i:
+    k +=1
+offset2 = offset[k]
 
 popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 figure(4)
@@ -325,15 +297,22 @@ ylabel('Rel. energy (GHz)')
 print('power fit = {0}'.format(popt1))
 print('R_1 MHz = {0} um'.format(R[np.max(np.where(abs(out_egr1-offset1)>1e-3))]))
 
+figure(6)
+clf()
+semilogx(R, out_vector[:, index1, out_coef[0,-1]]**2)
 
 #popt3,pcov3 = curve_fit(VdW, R[100:], abs(out_egr3[100:]- pair_56.E_Zeeman+ pair_12.E_Zeeman))
 #popt4,pcov4 = curve_fit(VdW, R[100:], abs(out_egr4[100:]- pair_78.E_Zeeman+ pair_12.E_Zeeman))
 if index2 != index1:
   #  out_egr2 = np.asarray([out_egr[i, out_coef[1,i]] for i in range(R_num)])
     #out_egr2 = out_egr[:, index2]
+    figure(2)
+    loglog(R, asarray(out_egr), R, asarray(out_egr2), '+')
+    figure(5)
+    loglog(R, -asarray(out_egr), R, -asarray(out_egr2), '+')
     figure(3)
     semilogx(R, out_egr2, 'wo')
-    popt2,pcov2 = curve_fit(pow_fit, R[100:], out_egr2[100:], p0=(100,6))
+    popt2,pcov2 = curve_fit(pow_fit, R[100:], abs(out_egr2[100:]-offset2), p0=(100,6))
     figure(4)
     loglog(R, abs(pow_fit(R, *popt2)), R,abs(out_egr2-offset2),'wo')
     print(popt2)
