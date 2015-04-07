@@ -50,18 +50,18 @@ coef_F = Ffield*e*a_0/h
 
 #check degeneracy
 N_list = [pair_12]
-for lA in np.arange(max(l1-2, 0), l1+2.1,1):
+for lA in np.arange(max(l1-1, 0), l1+1.1,1):
     if lA < n1:
-        for mA in np.arange(m1-2, m1+ 2.1,1):
+        for mA in np.arange(m1-1, m1+ 1.1,1):
             if np.abs(mA) <= lA:                 
                 try:
                     atomA_temp = Ryd_atom(n1, lA, mA)
                 except Exception:
                     print(lA, mA)
                 if np.abs(atomA_temp.E_Zeeman - atom_1.E_Zeeman) < 1e-10:
-                    for lB in np.arange(max(l2-2, 0), l2+2.1):
+                    for lB in np.arange(max(l2-1, 0), l2+1.1):
                         if lB < n2:
-                            for mB in np.arange(m2-2, m2+ 2.1):
+                            for mB in np.arange(m2-1, m2+ 1.1):
                                 if np.abs(mB) <= lB:
                                     try:
                                         atomB_temp = Ryd_atom(n2, lB, mB)
@@ -77,9 +77,10 @@ print('Degenerated pairs ={0}'.format(len(N_list)))
 
 #Search 1st order coupling terms
 N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
-
-
 N_list += N_list1
+#N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
+#N_list += N_list1
+
 print ('N_list = {0}'.format(len(N_list)))
        
 
@@ -100,19 +101,28 @@ print('1st order Stark terms: {0}'.format(len(N_list_Stark)))
 
 count_doub(N_list, N_list_Stark)
 
-#============= Create base 
-#for n in arange(atom_1.n -15, atom_1.n +16, 1):
-#    for l in arange(max(0, atom_1.l -3), min(atom_1.l +3.1,n),1):
-#        for j in arange(abs(l-0.5), l+0.6,1):
-#            for m in arange(-j, j+0.1,1):
-#                if abs(m -atom_1.m) <3:
-#                    try:
-#                        atom_temp = Ryd_atom(n,l,j,m)
-#                    except:
-#                        print(n, l,j,m)                            
-#                    if abs(atom_temp.En - atom_1.En) < 140e9:
-#                        if  atom_temp not in N_list:
-#                            N_list.append(atom_temp)
+#============= Create base =================
+#for nA in arange(atom_1.n -15, atom_1.n +16, 1):
+#    for lA in arange(max(0, atom_1.l -3), min(atom_1.l +3.1,nA),1):
+#        for mA in arange(-lA, lA+0.1,1):
+#            if abs(mA -atom_1.m) <3:
+#                try:
+#                    atomA_temp = Ryd_atom(nA,lA,mA)
+#                except:
+#                    print(nA, lA,mA)                            
+#                if abs(atomA_temp.En - atom_1.En) < 140e9/2:
+#                    for nB in arange(atom_2.n -15, atom_2.n +16, 1):
+#                        for lB in arange(max(0, atom_2.l -3), min(atom_2.l +3.1,nB),1):
+#                            for mB in arange(-lB, lB+0.1,1):
+#                                if abs(mB -atom_2.m) <3:
+#                                    try:
+#                                        atomB_temp = Ryd_atom(nB,lB,mB)
+#                                    except:
+#                                        print(nB, lB,mB)                            
+#                                    if abs(atomB_temp.En - atom_2.En) < 140e9/2:
+#                                        pairAB_temp = Ryd_pair(atomA_temp, atomB_temp)    
+#                                        if  pairAB_temp not in N_list:
+#                                            N_list.append(pairAB_temp)
 #                            
 #                            
 #Union_list = N_list

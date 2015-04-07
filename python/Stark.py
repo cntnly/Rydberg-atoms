@@ -66,26 +66,26 @@ def Search_Stark_level(atom, Not_list, Choice, delta_n_max):
                                    iA = 0
                                 iA += 1 
     return N_list
-N_list1= Search_Stark_level(atom, [], Choice_F, delta_n_max)
-print('N_list1 = {0}'.format(len(N_list1)))
-count_doub(N_list, N_list1)
-N_list += N_list1
-N_list2 = []
-for Atom in N_list:
-    N_list_temp = Search_Stark_level(Atom, N_list + N_list2, Choice_F, delta_n_max)
-    N_list2 += N_list_temp
-Union_list = N_list + N_list2
+#N_list1= Search_Stark_level(atom, [], Choice_F, delta_n_max)
+#print('N_list1 = {0}'.format(len(N_list1)))
+#count_doub(N_list, N_list1)
+#N_list += N_list1
+#N_list2 = []
+#for Atom in N_list:
+#    N_list_temp = Search_Stark_level(Atom, N_list + N_list2, Choice_F, delta_n_max)
+#    N_list2 += N_list_temp
+#Union_list = N_list + N_list2
 
 #============= Create base 
-#for n in arange(atom.n -15, atom.n +16, 1):
-#    for l in arange(max(0, atom.l -6), min(n,atom.l +6),1):
-#        for m in arange(-l, l+0.1,1):
-#            if abs(m -atom.m) < 6:
-#                atom_temp = Ryd_atom(n, l, m)
-#                if abs(atom_temp.En - atom.En) < 140e9:
-#                    if  atom_temp not in N_list:
-#                        N_list.append(atom_temp)
-#Union_list = N_list
+for n in arange(atom.n -15, atom.n +16, 1):
+    for l in arange(max(0, atom.l -6), min(n,atom.l +6.1),1):
+        for m in arange(-l, l+0.1,1):
+            if abs(m -atom.m) < 3:
+                atom_temp = Ryd_atom(n, l, m)
+                if abs(atom_temp.En - atom.En) < 140e9:
+                    if  atom_temp not in N_list:
+                        N_list.append(atom_temp)
+Union_list = N_list
 #=============================
 
 Union_list = sorted(Union_list, key = lambda energy: energy.En)
@@ -163,6 +163,7 @@ popt1,pcov1 = curve_fit(fit_fun, F[:100], out_egr1[:100], p0=(1, 2, 0))
 figure(4)
 clf()
 semilogx(F, out_vector[:, index, out_coef[-1]]**2)
+ylim(0,1.1)
 
 figure(5)
 clf()

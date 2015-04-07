@@ -9,15 +9,15 @@ l1 = n1-1
 #j1 = l1 + 1/2
 m1 = l1
 
-n2 = 61
+n2 = 60
 l2 = n2-1     
 #s2 =1/2
 #j2 = l2 + 1/2
 m2 = l2
 
-Bfield = 1e-10*8.17e-4 # Magnetic field from experiment 1 Teslta = 10*4 Gauss
+Bfield = 0*1e-10*8.17e-4 # Magnetic field from experiment 1 Teslta = 10*4 Gauss
 Ffield = 1e-0 # V/cm
-theta = 0*pi/2
+theta = 1*pi/2
 #theta =  0.95531661812450919
 
 # Setup criterion
