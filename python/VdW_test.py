@@ -50,99 +50,105 @@ coef_F = Ffield*e*a_0/h
 
 #check degeneracy
 N_list = [pair_12]
-for lA in np.arange(max(l1-1, 0), l1+1.1,1):
-    if lA < n1:
-        for mA in np.arange(m1-1, m1+ 1.1,1):
-            if np.abs(mA) <= lA:                 
-                try:
-                    atomA_temp = Ryd_atom(n1, lA, mA)
-                except Exception:
-                    print(lA, mA)
-                if np.abs(atomA_temp.E_Zeeman - atom_1.E_Zeeman) < 1e-10:
-                    for lB in np.arange(max(l2-1, 0), l2+1.1):
-                        if lB < n2:
-                            for mB in np.arange(m2-1, m2+ 1.1):
-                                if np.abs(mB) <= lB:
-                                    try:
-                                        atomB_temp = Ryd_atom(n2, lB, mB)
-                                    except Exception:
-                                        print (lB, mB)
-                                    if np.abs(atomB_temp.E_Zeeman - atom_2.E_Zeeman) < 1e-10:
-                                        #print (atomB_temp)
-                                        pair_temp = Ryd_pair(atomA_temp, atomB_temp)
-                                        if pair_temp not in N_list:
-                                            N_list.append(pair_temp)
-deg=len(N_list)
-print('Degenerated pairs ={0}'.format(len(N_list)))
-
-#Search 1st order coupling terms
-N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
-N_list += N_list1
-#N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
-#N_list += N_list1
-
-print ('N_list = {0}'.format(len(N_list)))
-       
-
-for pair in N_list:
-    if pair_invert(pair) not in N_list:
-        N_list.append(pair_invert(pair))
-print ('1st order terms: {0}'.format(len(N_list)))
-
-
-# Search for temp coupled by Stark effect
-N_list_Stark=[]
-Choice_F = (coef_F*coef_F)/Choice_F
-for elm in N_list:
-    N_list_Stark_temp = Search_Stark(elm, N_list + N_list_Stark, Choice_F, delta_n_max)
-    N_list_Stark += N_list_Stark_temp
-
-print('1st order Stark terms: {0}'.format(len(N_list_Stark)))
-
-count_doub(N_list, N_list_Stark)
+#N_deg=[]
+#for lA in np.arange(max(l1-1, 0), l1+1.1,1):
+#    if lA < n1:
+#        for mA in np.arange(m1-1, m1+ 1.1,1):
+#            if np.abs(mA) <= lA:                 
+#                try:
+#                    atomA_temp = Ryd_atom(n1, lA, mA)
+#                except Exception:
+#                    print(lA, mA)
+#                if np.abs(atomA_temp.E_Zeeman - atom_1.E_Zeeman) < 1e-10:
+#                    for lB in np.arange(max(l2-1, 0), l2+1.1):
+#                        if lB < n2:
+#                            for mB in np.arange(m2-1, m2+ 1.1):
+#                                if np.abs(mB) <= lB:
+#                                    try:
+#                                        atomB_temp = Ryd_atom(n2, lB, mB)
+#                                    except Exception:
+#                                        print (lB, mB)
+#                                    if np.abs(atomB_temp.E_Zeeman - atom_2.E_Zeeman) < 1e-10:
+#                                        #print (atomB_temp)
+#                                        pair_temp = Ryd_pair(atomA_temp, atomB_temp)
+#                                        if pair_temp not in (N_list + N_deg):
+#                                            N_deg.append(pair_temp)
+#deg=len(N_deg)
+#print('Degenerated pairs ={0}'.format(len(N_deg)+1))
+##Search 1st order coupling terms
+#N_list1 = Search_VdW(N_list, N_list + N_deg, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
+#N_list += N_list1 + N_deg
+##N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
+##N_list += N_list1
+#
+#print ('N_list = {0}'.format(len(N_list)))
+#       
+#
+#for pair in N_list:
+#    if pair_invert(pair) not in N_list:
+#        N_list.append(pair_invert(pair))
+#print ('1st order terms: {0}'.format(len(N_list)))
+#
+#
+## Search for temp coupled by Stark effect
+#N_list_Stark=[]
+#Choice_F = (coef_F*coef_F)/Choice_F
+#for elm in N_list:
+#    N_list_Stark_temp = Search_Stark(elm, N_list + N_list_Stark, Choice_F, delta_n_max)
+#    N_list_Stark += N_list_Stark_temp
+#
+#print('1st order Stark terms: {0}'.format(len(N_list_Stark)))
+#
+#count_doub(N_list, N_list_Stark)
 
 #============= Create base =================
-#for nA in arange(atom_1.n -15, atom_1.n +16, 1):
-#    for lA in arange(max(0, atom_1.l -3), min(atom_1.l +3.1,nA),1):
-#        for mA in arange(-lA, lA+0.1,1):
-#            if abs(mA -atom_1.m) <3:
-#                try:
-#                    atomA_temp = Ryd_atom(nA,lA,mA)
-#                except:
-#                    print(nA, lA,mA)                            
-#                if abs(atomA_temp.En - atom_1.En) < 140e9/2:
-#                    for nB in arange(atom_2.n -15, atom_2.n +16, 1):
-#                        for lB in arange(max(0, atom_2.l -3), min(atom_2.l +3.1,nB),1):
-#                            for mB in arange(-lB, lB+0.1,1):
-#                                if abs(mB -atom_2.m) <3:
-#                                    try:
-#                                        atomB_temp = Ryd_atom(nB,lB,mB)
-#                                    except:
-#                                        print(nB, lB,mB)                            
-#                                    if abs(atomB_temp.En - atom_2.En) < 140e9/2:
-#                                        pairAB_temp = Ryd_pair(atomA_temp, atomB_temp)    
-#                                        if  pairAB_temp not in N_list:
-#                                            N_list.append(pairAB_temp)
-#                            
-#                            
-#Union_list = N_list
+def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
+    atom_1 = pair.atom1
+    atom_2 = pair.atom2
+    N_list = []
+    for nA in arange(atom_1.n -delta_n, atom_1.n +delta_n+0.1, 1):
+        for lA in arange(max(0, atom_1.l -delta_l), min(atom_1.l +delta_l +0.1,nA),1):
+            for mA in arange(-lA, lA+0.1,1):
+                if abs(mA -atom_1.m) <=delta_m:
+                    try:
+                        atomA_temp = Ryd_atom(nA,lA,mA)
+                    except:
+                        print(nA, lA,mA)                            
+                    if abs(atomA_temp.En - atom_1.En) < delta_E:
+                        for nB in arange(atom_2.n -delta_n, atom_2.n +delta_n+0.1, 1):
+                            for lB in arange(max(0, atom_2.l -delta_l), min(atom_2.l +delta_l+.1,nB),1):
+                                for mB in arange(-lB, lB+0.1,1):
+                                    if abs(mB -atom_2.m) <=delta_m:
+                                        try:
+                                            atomB_temp = Ryd_atom(nB,lB,mB)
+                                        except:
+                                            print(nB, lB,mB)                            
+                                        if abs(atomB_temp.En - atom_2.En) < delta_E:
+                                            pairAB_temp = Ryd_pair(atomA_temp, atomB_temp)    
+                                            if  pairAB_temp not in Not_list:
+                                                N_list.append(pairAB_temp)
+    return N_list
+N_list1 = create_base(pair_12, N_list, 15, 5, 3, 100e9/2)                            
+Union_list = N_list + N_list1
 #=============================
 
-Union_list = N_list + N_list_Stark # sure that elements of N_list are not in N_list2
+#Union_list = N_list + N_list_Stark # sure that elements of N_list are not in N_list2
 for pair in Union_list:
     if pair_invert(pair) not in Union_list:
         Union_list.append(pair_invert(pair))
         
         
 print ('Matrix size: {0}'.format(len(Union_list)))
-#try:
-#    raw_input("Press enter to continue")
-#except:
-#    input("Press Enter to continue")
-                        
+try:
+    raw_input("Press enter to continue")
+except:
+    input("Press Enter to continue")
+print('wait...')           
+sys.stdout.flush()
+
 # sort list as energy order
 Union_list = sorted(Union_list, key = lambda energy: energy.E_Zeeman)
-print(len(Union_list))                    
+#print(len(Union_list))                    
 figure(1)
 clf()
 subplot(2,2,1)
@@ -297,19 +303,20 @@ k = np.argmax(abs(np.delete(off_vec[index2,:], i)))
 if k >= i:
     k +=1
 offset2 = offset[k]
-
-popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
+popt1,pcov1 = curve_fit(VdW, R[100:], out_egr1[100:]-offset1, p0=(100))
+#popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 figure(4)
 clf()
-loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
+loglog(R, abs(VdW(R, *popt1)), R,abs(out_egr1-offset1), '+')
+#loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 print('power fit = {0}'.format(popt1))
 print('R_1 MHz = {0} um'.format(R[np.max(np.where(abs(out_egr1-offset1)>1e-3))]))
 
-figure(6)
-clf()
-semilogx(R, out_vector[:, index1, out_coef[0,-1]]**2)
+figure(6);clf()
+#semilogx(R, out_vector[:, index1, out_coef[0,-1]]**2)
+semilogx(R, asarray([out_vector[i, index1, out_coef[0,i]] for i in range(R_num)])**2)
 
 #popt3,pcov3 = curve_fit(VdW, R[100:], abs(out_egr3[100:]- pair_56.E_Zeeman+ pair_12.E_Zeeman))
 #popt4,pcov4 = curve_fit(VdW, R[100:], abs(out_egr4[100:]- pair_78.E_Zeeman+ pair_12.E_Zeeman))

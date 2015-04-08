@@ -80,7 +80,7 @@ def Search_Stark_level(atom, Not_list, Choice, delta_n_max):
 for n in arange(atom.n -15, atom.n +16, 1):
     for l in arange(max(0, atom.l -6), min(n,atom.l +6.1),1):
         for m in arange(-l, l+0.1,1):
-            if abs(m -atom.m) < 3:
+            if abs(m -atom.m) < 5:
                 atom_temp = Ryd_atom(n, l, m)
                 if abs(atom_temp.En - atom.En) < 140e9:
                     if  atom_temp not in N_list:
