@@ -10,6 +10,7 @@ import numpy as np
 #import numexpr as ne
 import sys
 sys.path.append('C:/Users/r14/Documents/GitHub/test/python')
+sys.path.append('D:/NTL/Simulation/Python/python')
 
 from imp import reload
 

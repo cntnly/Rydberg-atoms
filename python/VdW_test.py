@@ -45,6 +45,9 @@ print(pair_12)
 print('theta = {0} deg'.format(theta*180/pi))
 print('B_field = {0} G'.format(Bfield*1e4))
 print('F_field = {0} V/cm'.format(Ffield))
+print('theta_F = {0} deg'.format(theta_F*180/pi))
+print('phi_F = {0} deg'.format(phi_F*180/pi))
+
 Ffield = Ffield*100 # V/m
 coef_F = Ffield*e*a_0/h
 
@@ -114,21 +117,22 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
                         atomA_temp = Ryd_atom(nA,lA,mA)
                     except:
                         print(nA, lA,mA)                            
-                    if abs(atomA_temp.En - atom_1.En) < delta_E:
-                        for nB in arange(atom_2.n -delta_n, atom_2.n +delta_n+0.1, 1):
-                            for lB in arange(max(0, atom_2.l -delta_l), min(atom_2.l +delta_l+.1,nB),1):
-                                for mB in arange(-lB, lB+0.1,1):
-                                    if abs(mB -atom_2.m) <=delta_m:
-                                        try:
-                                            atomB_temp = Ryd_atom(nB,lB,mB)
-                                        except:
-                                            print(nB, lB,mB)                            
-                                        if abs(atomB_temp.En - atom_2.En) < delta_E:
-                                            pairAB_temp = Ryd_pair(atomA_temp, atomB_temp)    
-                                            if  pairAB_temp not in Not_list:
-                                                N_list.append(pairAB_temp)
+                 #   if abs(atomA_temp.En - atom_1.En) < delta_E:
+                    for nB in arange(atom_2.n -delta_n, atom_2.n +delta_n+0.1, 1):
+                        for lB in arange(max(0, atom_2.l -delta_l), min(atom_2.l +delta_l+.1,nB),1):
+                            for mB in arange(-lB, lB+0.1,1):
+                                if abs(mB -atom_2.m) <=delta_m:
+                                    try:
+                                        atomB_temp = Ryd_atom(nB,lB,mB)
+                                    except:
+                                        print(nB, lB,mB)                            
+                                 #   if abs(atomB_temp.En - atom_2.En) < delta_E:
+                                    pairAB_temp = Ryd_pair(atomA_temp, atomB_temp) 
+                                    if abs(pairAB_temp.E_Zeeman - pair_12.E_Zeeman) < delta_E:
+                                        if  pairAB_temp not in Not_list:
+                                            N_list.append(pairAB_temp)
     return N_list
-N_list1 = create_base(pair_12, N_list, 15, 5, 3, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list, 5, 20, 1, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -139,12 +143,12 @@ for pair in Union_list:
         
         
 print ('Matrix size: {0}'.format(len(Union_list)))
-try:
-    raw_input("Press enter to continue")
-except:
-    input("Press Enter to continue")
-print('wait...')           
-sys.stdout.flush()
+#try:
+#    raw_input("Press enter to continue")
+#except:
+#    input("Press Enter to continue")
+#print('wait...')           
+#sys.stdout.flush()
 
 # sort list as energy order
 Union_list = sorted(Union_list, key = lambda energy: energy.E_Zeeman)
@@ -158,13 +162,13 @@ ylabel('Rel. energy (GHz)')
 # Create interaction Matrix
 length = len(Union_list)
 # create mask
-V_total = np.zeros((length,length))
-V_R = np.zeros_like(V_total)
-V_A = np.zeros_like(V_total)
-V_Stark1 = np.zeros_like(V_total)
-V_Stark2 = np.zeros_like(V_total)
+V_VdW = 0j*np.empty((length,length))
+V_R = 0j*np.empty_like(V_VdW)
+V_A = 0j*np.empty_like(V_VdW)
+V_Stark1 = 0j*np.empty_like(V_VdW)
+V_Stark2 = 0j*np.empty_like(V_VdW)
 # mask to calculate only lower triangular matrix
-mask1 = np.tril(np.ones_like(V_total))!=0
+mask1 = np.tril(np.ones_like(V_VdW))!=0
 
 #vectorize necessary functions
 rad_vec = np.vectorize(radinte)
@@ -191,39 +195,39 @@ V_A[mask1] = A_vec(Pair1_l1, Pair1_m1, Pair1_l2, Pair1_m2, Pair2_l1, Pair2_m1, P
 # Choose only elements different from 0
 mask2 = V_A[mask1] !=0
 V_R[V_A!=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)*rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
-V_total[V_A!=0] = V_R[V_A!=0]*V_A[V_A!=0]
-V_total = V_total + V_total.T - np.diag(V_total.diagonal())
-V_total = V_total*1e-9 # convert to GHz.m^3
+V_VdW[V_A!=0] = V_R[V_A!=0]*V_A[V_A!=0]
+V_VdW = V_VdW + V_VdW.T.conj() - np.diag(V_VdW.diagonal())
+V_VdW = V_VdW*1e-9 # convert to GHz.m^3
 
 figure(1)
 subplot(2,2,2)
-imshow(V_total,)
+imshow(np.real(V_VdW),)
 colorbar()
 
-V_R = np.zeros_like(V_total)
-V_A = np.zeros_like(V_total)
-V_A[mask1] = A_Stark_vec(Pair1_l1, Pair1_m1, Pair2_l1, Pair2_m1)*(Pair1_n2 == Pair2_n2) *(Pair1_l2 == Pair2_l2)*(Pair1_m2 == Pair2_m2)
+V_R = np.zeros_like(V_VdW)
+V_A = np.zeros_like(V_VdW)
+V_A[mask1] = A_Stark_vec(Pair1_l1, Pair1_m1, Pair2_l1, Pair2_m1, theta_F, phi_F)*(Pair1_n2 == Pair2_n2) *(Pair1_l2 == Pair2_l2)*(Pair1_m2 == Pair2_m2)
 mask2 = V_A[mask1] !=0
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)
     V_Stark1[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
-    V_Stark1 = V_Stark1 + V_Stark1.T - np.diag(V_Stark1.diagonal())
+    V_Stark1 = V_Stark1 + V_Stark1.T.conj() - np.diag(V_Stark1.diagonal())
     V_Stark1 = V_Stark1*1e-9
 subplot(2,2,3)
-imshow(V_Stark1)
+imshow(np.imag(V_Stark1))
 colorbar()
 
-V_R = np.zeros_like(V_total)
-V_A = np.zeros_like(V_total)
-V_A[mask1] = A_Stark_vec(Pair1_l2, Pair1_m2, Pair2_l2, Pair2_m2)*(Pair1_n1 == Pair2_n1) *(Pair1_l1 == Pair2_l1)*(Pair1_m1 == Pair2_m1)
+V_R = np.zeros_like(V_VdW)
+V_A = np.zeros_like(V_VdW)
+V_A[mask1] = A_Stark_vec(Pair1_l2, Pair1_m2, Pair2_l2, Pair2_m2, theta_F, phi_F)*(Pair1_n1 == Pair2_n1) *(Pair1_l1 == Pair2_l1)*(Pair1_m1 == Pair2_m1)
 mask2 = V_A[mask1] !=0
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
     V_Stark2[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
-    V_Stark2 = V_Stark2 + V_Stark2.T - np.diag(V_Stark2.diagonal())
+    V_Stark2 = V_Stark2 + V_Stark2.T.conj() - np.diag(V_Stark2.diagonal())
     V_Stark2 = V_Stark2*1e-9
 subplot(2,2,4)
-imshow(V_Stark2)
+imshow(np.imag(V_Stark2))
 colorbar()
 
 # Zero-th Energy
@@ -247,8 +251,8 @@ out_coef = np.empty((2,R_num))
 out_vector = np.empty((R_num,length, length))
 R = np.logspace(log10(R_min), log10(R_max), num = R_num)
 for i,elm in enumerate(R):
-    #out_egr[i] = np.linalg.eigvalsh(EI + V_total* coef/(elm**3)) - pair_12.E_Zeeman
-    out_egr[i] , out_vector[i] = np.linalg.eigh(EI + 1e18*V_total* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2))
+    #out_egr[i] = np.linalg.eigvalsh(EI + V_VdW* coef/(elm**3)) - pair_12.E_Zeeman
+    out_egr[i] , out_vector[i] = np.linalg.eigh(EI + 1e18*V_VdW* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2))
     out_egr[i] = out_egr[i] - pair_12.E_Zeeman*1e-9
     out_coef[0,i] = np.argmax(abs(out_vector[i][index1,:]))
     out_coef[1,i] = np.argmax(abs(np.delete(out_vector[i][index2,:],out_coef[0,i])))

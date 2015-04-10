@@ -15,9 +15,11 @@ l2 = n2-1
 #j2 = l2 + 1/2
 m2 = l2
 
-Bfield = 0*1e-10*8.17e-4 # Magnetic field from experiment 1 Teslta = 10*4 Gauss
-Ffield = 1e-0 # V/cm
+Bfield = 10.e-4 # Magnetic field from experiment 1 Teslta = 10*4 Gauss
+Ffield = 1e-1 # V/cm
 theta = 1*pi/2
+theta_F = 0.001*pi/2
+phi_F = 0.001*pi/2
 #theta =  0.95531661812450919
 
 # Setup criterion
