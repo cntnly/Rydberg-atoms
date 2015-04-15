@@ -6,7 +6,7 @@ Created on Fri Mar 27 12:02:57 2015
 """
 from __future__ import division
 import numpy as np
-from para import *
+#from para import *
 from constant import *
 import pyximport; pyximport.install()
 try:
@@ -31,8 +31,8 @@ def A_Stark (lA, mA, lAp, mAp, theta, phi):
     F makes with quantization axis (Bfield) angle theta and with Bfield_atom pair plan angle phi
     
     """
-    Fx = np.sin(theta)*np.sin(phi)
-    Fy = np.sin(theta)*np.cos(phi)
+    Fx = np.sin(theta)*np.cos(phi)
+    Fy = np.sin(theta)*np.sin(phi)
     Fz = np.cos(theta)
     Y10 = Wigner3j(lA, 1, lAp, -mA, 0, mAp)
     Y11 = Wigner3j(lA, 1, lAp, -mA, 1, mAp)

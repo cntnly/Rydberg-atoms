@@ -39,6 +39,10 @@ coef_F = e*a_0/h
 Choice_F = (coef_F*coef_F)/Choice_F
 atom = Ryd_atom(n1, l1, m1)
 print(atom)
+print('B_field = {0} G'.format(Bfield*1e4))
+print('theta_F = {0} deg'.format(theta_F*180/pi))
+print('phi_F = {0} deg'.format(phi_F*180/pi))
+
 N_list = [atom]
 def Search_Stark_level(atom, Not_list, Choice, delta_n_max):
     n, l, m = atom.n,atom.l, atom.m
@@ -99,9 +103,9 @@ ylabel('Rel. energy (GHz)')
 # Create interaction Matrix
 length = len(Union_list)
 # create mask
-V_Stark = np.zeros((length,length))
-V_R = np.zeros_like(V_Stark)
-V_A = np.zeros_like(V_Stark)
+V_Stark = 0j*np.zeros((length,length))
+V_R = 0j*np.zeros_like(V_Stark)
+V_A = 0j*np.zeros_like(V_Stark)
 
 rad_vec = np.vectorize(radinte)
 A_Stark_vec = np.vectorize(A_Stark)
@@ -116,16 +120,16 @@ Atom1_Erad, Atom2_Erad = meshgrid(V_row[:,3],V_row[:,3])
 mask1 = np.tril(np.ones_like(V_Stark))!=0
 Atom1_n, Atom1_l, Atom1_m, Atom1_Erad = Atom1_n[mask1], Atom1_l[mask1], Atom1_m[mask1], Atom1_Erad[mask1]
 Atom2_n, Atom2_l, Atom2_m, Atom2_Erad = Atom2_n[mask1], Atom2_l[mask1], Atom2_m[mask1], Atom2_Erad[mask1]
-V_A[mask1] = A_Stark_vec(Atom1_l, Atom1_m, Atom2_l, Atom2_m)
+V_A[mask1] = A_Stark_vec(Atom1_l, Atom1_m, Atom2_l, Atom2_m, theta_F, phi_F)
 mask2 = V_A[mask1] !=0
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Atom1_Erad[mask2], Atom1_l[mask2], Atom2_Erad[mask2], Atom2_l[mask2], 1)
     V_Stark[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
-    V_Stark = V_Stark + V_Stark.T - np.diag(V_Stark.diagonal())
+    V_Stark = V_Stark + V_Stark.T.conj() - np.diag(V_Stark.diagonal())
     V_Stark = V_Stark*1e-6
 figure(2)
 clf()
-imshow(V_Stark)
+imshow(np.real(V_Stark))
 colorbar()
 
 F_max = 2 #in V/cm

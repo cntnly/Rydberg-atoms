@@ -2,31 +2,37 @@
 
 from __future__ import division
 from numpy import pi
+import builtins
+
 # Define levels
-n1 = 60
-l1 = n1-1
+builtins.n1 = 60
+builtins.l1 = n1-1
 #s1 = 1/2
 #j1 = l1 + 1/2
-m1 = l1
+builtins.m1 = l1
 
-n2 = 60
-l2 = n2-1     
+builtins.n2 = 61
+builtins.l2 = n2-1     
 #s2 =1/2
 #j2 = l2 + 1/2
-m2 = l2
+builtins.m2 = l2
 
-Bfield = 10.e-4 # Magnetic field from experiment 1 Teslta = 10*4 Gauss
-Ffield = 1e-1 # V/cm
-theta = 1*pi/2
-theta_F = 0.001*pi/2
-phi_F = 0.001*pi/2
+builtins.Bfield = 0.e-4 # Magnetic field from experiment 1 Teslta = 10*4 Gauss
+builtins.Ffield = 0*1e-2 # V/cm
+builtins.theta = 1*pi/2
+builtins.theta_F = pi/2
+builtins.phi_F = 1*pi/2
 #theta =  0.95531661812450919
 
 # Setup criterion
 delta_n_max = 6
 l_max = 2
 Choice = 1e7# cut off energy for 1st order term, in Hz
-R_test = 1e-6
+builtins.R_test = 1e-6
 Choice2 = 10* Choice
 
 Choice_F = 1e-1 # cut off for Stark shift
+
+if __name__ == '__main__':
+    import cal_VdW
+

@@ -1,24 +1,28 @@
 # -*- coding: utf-8 -*-
-
 from __future__ import division
 import numpy as np
+from matplotlib import *
+from pylab import *
+import builtins
 #import numexpr as ne
 import sys
-sys.path.append('C:/Users/r14/Documents/GitHub/test/python')
+path = 'C:/Users/r14/Documents/GitHub/test/python'
+if path not in sys.path:
+    sys.path.append(path)
 
 from imp import reload
 
-import para
-from para import *
+if __name__ == '__main__':
+    import para
+    from para import *
+        
+    reload(para)
+    from para import *
+#import constant
+#from constant import * # define constant to be used
 
-reload(para)
-from para import *
-
-import constant
-from constant import * # define constant to be used
-
-reload(constant)
-from constant import *
+#reload(constant)
+#from constant import *
 # import radinte
 import pyximport; pyximport.install()
 try:
@@ -48,7 +52,8 @@ print('F_field = {0} V/cm'.format(Ffield))
 print('theta_F = {0} deg'.format(theta_F*180/pi))
 print('phi_F = {0} deg'.format(phi_F*180/pi))
 
-Ffield = Ffield*100 # V/m
+builtins.Ffield = Ffield*100 # V/m
+print(Ffield)
 coef_F = Ffield*e*a_0/h
 
 #check degeneracy
@@ -132,7 +137,7 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
                                         if  pairAB_temp not in Not_list:
                                             N_list.append(pairAB_temp)
     return N_list
-N_list1 = create_base(pair_12, N_list, 5, 20, 1, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list, 5, 20,2, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -253,6 +258,7 @@ R = np.logspace(log10(R_min), log10(R_max), num = R_num)
 for i,elm in enumerate(R):
     #out_egr[i] = np.linalg.eigvalsh(EI + V_VdW* coef/(elm**3)) - pair_12.E_Zeeman
     out_egr[i] , out_vector[i] = np.linalg.eigh(EI + 1e18*V_VdW* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2))
+  #  print(out_egr[np.iscomplex(out_egr[i])])
     out_egr[i] = out_egr[i] - pair_12.E_Zeeman*1e-9
     out_coef[0,i] = np.argmax(abs(out_vector[i][index1,:]))
     out_coef[1,i] = np.argmax(abs(np.delete(out_vector[i][index2,:],out_coef[0,i])))
@@ -288,7 +294,7 @@ ylabel('Rel. energy (GHz)')
 def VdW(r,C):
     return C*(r**-6)
 def pow_fit(r,C,n):
-    return C*(r**-n)
+    return C*(r**-3)
 
 #popt,pcov = curve_fit(VdW, R[100:], abs(out_egr1[100:]))
 #popt2,pcov = curve_fit(VdW, R[80:], abs(out_egr2[80:]))
@@ -307,15 +313,15 @@ k = np.argmax(abs(np.delete(off_vec[index2,:], i)))
 if k >= i:
     k +=1
 offset2 = offset[k]
-popt1,pcov1 = curve_fit(VdW, R[100:], out_egr1[100:]-offset1, p0=(100))
+popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,3))
 #popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 figure(4)
 clf()
-loglog(R, abs(VdW(R, *popt1)), R,abs(out_egr1-offset1), '+')
+loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
 #loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
-print('power fit = {0}'.format(popt1))
+print('C6 = {0} GHz.um^6'.format(popt1))
 print('R_1 MHz = {0} um'.format(R[np.max(np.where(abs(out_egr1-offset1)>1e-3))]))
 
 figure(6);clf()
@@ -333,7 +339,7 @@ if index2 != index1:
     loglog(R, -asarray(out_egr), R, -asarray(out_egr2), '+')
     figure(3)
     semilogx(R, out_egr2, 'wo')
-    popt2,pcov2 = curve_fit(pow_fit, R[100:], abs(out_egr2[100:]-offset2), p0=(100,6))
+    popt2,pcov2 = curve_fit(pow_fit, R[100:], abs(out_egr2[100:]-offset2), p0=(100,3))
     figure(4)
     loglog(R, abs(pow_fit(R, *popt2)), R,abs(out_egr2-offset2),'wo')
     print(popt2)

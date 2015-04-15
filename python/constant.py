@@ -17,7 +17,7 @@ m_Rb87 = 86.909180520*u
 alpha = codata.value('fine-structure constant')
 Ry_Rb87 = Ry/(1+m_e/m_Rb87) # Rydberg constant with mass correction
 
-from para import *
+#from para import *
 
 # calculate quantum defect
 delta_0 = np.array([3.1311804, 2.6548849, 2.6416737,1.34809171, 1.34646572, 0.0165192, 0.0165437, 0])
@@ -89,6 +89,8 @@ class Ryd_atom(object):
         self.En = En(n, 7) # 10 to ignore the quantum defect
         self.E_radinte = E_radinte(n, 7)
         self.E_Zeeman = self.En + Zeemanshift(l, m, Bfield)
+#    def E_Zeeman(self, B_field):
+#        return self.En + Zeemanshift(self.l, self.m, B_field)
     def __repr__(self):
         return "atom {0}, {1}, {2}".format(self.n, self.l, self.m)
     def __eq__(self, other):
@@ -102,11 +104,12 @@ class Ryd_pair (object):
         if isinstance(atom1, Ryd_atom) & isinstance(atom2, Ryd_atom):
             self.atom1 = atom1
             self.atom2 = atom2
-            self. E = atom1.En + atom2.En
-            self.E_Zeeman = atom1.E_Zeeman + atom2.E_Zeeman
         else:
             raise Exception('input should be of Ryd_atom class')
             pass
+        self. E = atom1.En + atom2.En
+        self.E_Zeeman = atom1.E_Zeeman + atom2.E_Zeeman
+        
             
     def __repr__(self):
         return '{0} and {1}'.format(self.atom1, self.atom2)
