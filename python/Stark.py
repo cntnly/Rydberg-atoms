@@ -42,6 +42,13 @@ print(atom)
 print('B_field = {0} G'.format(Bfield*1e4))
 print('theta_F = {0} deg'.format(theta_F*180/pi))
 print('phi_F = {0} deg'.format(phi_F*180/pi))
+from mpl_toolkits.mplot3d import Axes3D
+fig = plt.figure('config')
+ax = fig.gca(projection='3d')
+ax.plot([0,0],[0,0],[0,1],'red')
+ax.plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o')
+ax.plot([0,np.sin(theta_F)*np.cos(phi_F)],[0,np.sin(theta_F)*np.sin(phi_F)],[0,np.cos(theta_F)])
+plt.show()
 
 N_list = [atom]
 def Search_Stark_level(atom, Not_list, Choice, delta_n_max):

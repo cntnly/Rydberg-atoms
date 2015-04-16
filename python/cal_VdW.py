@@ -53,8 +53,16 @@ print('theta_F = {0} deg'.format(theta_F*180/pi))
 print('phi_F = {0} deg'.format(phi_F*180/pi))
 
 builtins.Ffield = Ffield*100 # V/m
-print(Ffield)
 coef_F = Ffield*e*a_0/h
+
+from mpl_toolkits.mplot3d import Axes3D
+fig = plt.figure('config')
+clf()
+ax = fig.gca(projection='3d')
+ax.plot([0,0],[0,0],[0,1],'red')
+ax.plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o')
+ax.plot([0,Ffield*np.sin(theta_F)*np.cos(phi_F)],[0,Ffield*np.sin(theta_F)*np.sin(phi_F)],[0,Ffield*np.cos(theta_F)])
+plt.show()
 
 #check degeneracy
 N_list = [pair_12]
@@ -294,7 +302,7 @@ ylabel('Rel. energy (GHz)')
 def VdW(r,C):
     return C*(r**-6)
 def pow_fit(r,C,n):
-    return C*(r**-3)
+    return C*(r**-6)
 
 #popt,pcov = curve_fit(VdW, R[100:], abs(out_egr1[100:]))
 #popt2,pcov = curve_fit(VdW, R[80:], abs(out_egr2[80:]))
@@ -313,7 +321,7 @@ k = np.argmax(abs(np.delete(off_vec[index2,:], i)))
 if k >= i:
     k +=1
 offset2 = offset[k]
-popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,3))
+popt1,pcov1 = curve_fit(pow_fit, R[75:135], out_egr1[75:135]-offset1, p0=(100,6))
 #popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 figure(4)
 clf()
@@ -339,7 +347,7 @@ if index2 != index1:
     loglog(R, -asarray(out_egr), R, -asarray(out_egr2), '+')
     figure(3)
     semilogx(R, out_egr2, 'wo')
-    popt2,pcov2 = curve_fit(pow_fit, R[100:], abs(out_egr2[100:]-offset2), p0=(100,3))
+    popt2,pcov2 = curve_fit(pow_fit, R[100:], abs(out_egr2[100:]-offset2), p0=(100,6))
     figure(4)
     loglog(R, abs(pow_fit(R, *popt2)), R,abs(out_egr2-offset2),'wo')
     print(popt2)
