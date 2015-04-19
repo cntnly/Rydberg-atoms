@@ -12,10 +12,8 @@ from libc.math cimport exp, sqrt, pow
 def radinte(double E1, double L1, double E2, double L2, double I, double H = 0.01):
     """
     radinte(double E1, double L1, double E2, double L2, double I, double H = 0.01)
-	Calculate Numerov integration for two states <E1,L1| R**I|E2,L2> with square root step H (default 0.01)
-	Test formula
-	<n,l | r| n, l-1> = 3/2n Sqrt[n^2-l^2]
-	"""
+	calculate Numerov integration for two states <E1,L1| R**I|E2,L2> with square root step H (default 0.01)
+	radinte(E1, L1, E2, L2, I, H = 0.01)    """
 	
 	
     cdef double AL1 = (2*L1 + 0.5)*(2*L1 + 1.5)
@@ -80,7 +78,7 @@ def radinte(double E1, double L1, double E2, double L2, double I, double H = 0.0
                     W22 = 0.
         S1 += (W12*U)*(W12*U)
         S2 += (W22*U)*(W22*U)
-        S12+= W12*W22*(U**(2.*I+2.))
+        S12+= W12*W22*pow(U,(2.*I+2.))
     return S12/sqrt(S1)/sqrt(S2)
 cdef double pot(double R, double E, double A):
     """Define the potential as pure Coulombic. Polarization and Fine structure terms can be added"""

@@ -17,7 +17,7 @@ m_Rb87 = 86.909180520*u
 alpha = codata.value('fine-structure constant')
 Ry_Rb87 = Ry/(1+m_e/m_Rb87) # Rydberg constant with mass correction
 
-from para import *
+#from para import *
 
 # calculate quantum defect
 delta_0 = np.array([3.1311804, 2.6548849, 2.6416737,1.34809171, 1.34646572, 0.0165192, 0.0165437, 0])
@@ -67,42 +67,34 @@ def choose_lj(l, j):
     else:
         return 7
 
-def g(l, j):
+def Zeemanshift(l, m, Bfield):
     """
-    g(l, j)
-    Define Lande g-factor 
+    Zeemanshift(l, m, Bfield))
     """
-    return 1.5 + (3/4 - l*(l+1))/(2*j*(j +1))
-def Zeemanshift(l, j, m, Bfield):
-    """
-    Zeemanshift(l, j, m, Bfield))
-    """
-    return Bfield * g(l, j)* m * mu_B/h
+    return Bfield * m * mu_B/h
 class Ryd_atom(object):
     """
-    Define Rydberg atom with its n, l, j ,m
-    Return En, Zeeman shift, E_radinte,"""
-    def __init__(self, n, l, j, m):
+    Ryd_atom(n, l, m)
+    Define Rydberg atom with its n, l, m, which ignores fine structure. This holds true for circular series atoms
+    Return En
+    """
+    def __init__(self, n, l, m):
         if l>n:
             raise Exception('l > n')
-        if j > l+0.5:
-            raise Exception('j > l+1/2')
-        if j < np.abs(l-0.5):
-            raise Exception('j < |l-1/2|')
-        if np.abs(m) > j:
-            raise Exception('|m| > j')
+        if np.abs(m) > l:
+            raise Exception('|m| > l')
         self.n = n
         self.l = l
-        self. j = j
         self.m = m
-        self.lj = choose_lj(l,j)
-        self.En = En(n, self.lj)
-        self.E_radinte = E_radinte(n, self.lj)
-        self.E_Zeeman = self.En + Zeemanshift(l, j, m, Bfield)
+        self.En = En(n, 7) # 10 to ignore the quantum defect
+        self.E_radinte = E_radinte(n, 7)
+        self.E_Zeeman = self.En + Zeemanshift(l, m, Bfield)
+#    def E_Zeeman(self, B_field):
+#        return self.En + Zeemanshift(self.l, self.m, B_field)
     def __repr__(self):
-        return "atom {0}, {1}, {2} ,{3}".format(self.n, self.l, self.j, self.m)
+        return "atom {0}, {1}, {2}".format(self.n, self.l, self.m)
     def __eq__(self, other):
-        return (self.n, self.l, self.j, self.m) == (other.n, other.l, other.j, other.m)
+        return (self.n, self.l, self.m) == (other.n, other.l, other.m)
         
 class Ryd_pair (object):
     def __init__(self, atom1, atom2):
@@ -112,11 +104,12 @@ class Ryd_pair (object):
         if isinstance(atom1, Ryd_atom) & isinstance(atom2, Ryd_atom):
             self.atom1 = atom1
             self.atom2 = atom2
-            self. E = atom1.En + atom2.En
-            self.E_Zeeman = atom1.E_Zeeman + atom2.E_Zeeman
         else:
             raise Exception('input should be of Ryd_atom class')
             pass
+        self. E = atom1.En + atom2.En
+        self.E_Zeeman = atom1.E_Zeeman + atom2.E_Zeeman
+        
             
     def __repr__(self):
         return '{0} and {1}'.format(self.atom1, self.atom2)
