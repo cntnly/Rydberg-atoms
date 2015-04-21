@@ -277,24 +277,41 @@ for i,elm in enumerate(R):
 out_egr1 = [out_egr[i, out_coef[0,i]] for i in range(R_num)]
 out_egr2 = [out_egr[i, out_coef[1,i]] for i in range(R_num)]
 
+out_vec1 = np.asarray([out_vector[i,:,out_coef[0,i]] for i in range(R_num)])
 
 
+#figure(2)
+#clf()
+##semilogx(R, out_egr1)
+##semilogx(R, out_egr2)
+#loglog(R, asarray(out_egr), R, asarray(out_egr1), '+')
+#xlabel('$R (\mu$m)')
+#ylabel('Rel. energy (GHz)')
+#figure(5);clf();
+
+pcolor(R,np.arange(length),out_vec1.T**2)
+xlim(R_min, R_max), ylim(ymax= length)
+xscale('log')
+
+#loglog(R, -asarray(out_egr), R, -asarray(out_egr1), '+')
+#semilogx(R, out_egr[:,index3])
+#semilogx(R, out_egr[:,index4])
 figure(2)
 clf()
 #semilogx(R, out_egr1)
 #semilogx(R, out_egr2)
-loglog(R, asarray(out_egr), R, asarray(out_egr1), '+')
+semilogx(R, out_egr, R, out_egr1, '+')
+xlim(R_min, R_max)
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
-figure(5);clf()
-loglog(R, -asarray(out_egr), R, -asarray(out_egr1), '+')
-#semilogx(R, out_egr[:,index3])
-#semilogx(R, out_egr[:,index4])
+
 figure(3)
 clf()
 #semilogx(R, out_egr1)
 #semilogx(R, out_egr2)
 semilogx(R, out_egr, R, out_egr1, '+')
+xlim(R_min, R_max)
+ylim(out_egr1[-1]-0.1, out_egr1[-1]+0.1)
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 
@@ -321,7 +338,7 @@ k = np.argmax(abs(np.delete(off_vec[index2,:], i)))
 if k >= i:
     k +=1
 offset2 = offset[k]
-popt1,pcov1 = curve_fit(pow_fit, R[75:135], out_egr1[75:135]-offset1, p0=(100,6))
+popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 #popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 figure(4)
 clf()
@@ -353,7 +370,8 @@ if index2 != index1:
     print(popt2)
   
 
-
+x=where(out_vec1[50]*2>0.1)
+[Union_list[i] for i in x[0]]
 
 
 
