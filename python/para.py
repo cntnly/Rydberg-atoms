@@ -18,9 +18,9 @@ builtins.l2 = n2-1
 builtins.m2 = l2
 
 builtins.Bfield = 10.e-4 # Magnetic field from experiment 1 Teslta = 10*4 Gauss
-builtins.Ffield = 0*5e-3 # V/cm
+builtins.Ffield = 10e-3 # V/cm
 builtins.theta = 0*pi/2
-builtins.theta_F =1.*pi/2
+builtins.theta_F =.1*pi/2
 builtins.phi_F = 0.*pi/2
 #theta =  0.95531661812450919
 

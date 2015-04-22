@@ -6,7 +6,10 @@ Created on Mon Mar 30 16:31:05 2015
 """
 
 from __future__ import division
-import numpy as np
+from numpy import *
+from matplotlib.pyplot import *
+import matplotlib.pyplot as plt
+
 #import numexpr as ne
 import sys
 sys.path.append('C:/Users/r14/Documents/GitHub/test/python')
@@ -43,7 +46,7 @@ print('B_field = {0} G'.format(Bfield*1e4))
 print('theta_F = {0} deg'.format(theta_F*180/pi))
 print('phi_F = {0} deg'.format(phi_F*180/pi))
 from mpl_toolkits.mplot3d import Axes3D
-fig = plt.figure('config')
+fig = figure(0)
 ax = fig.gca(projection='3d')
 ax.plot([0,0],[0,0],[0,1],'red')
 ax.plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o')
@@ -174,7 +177,7 @@ popt1,pcov1 = curve_fit(fit_fun, F[:100], out_egr1[:100], p0=(1, 2, 0))
 
 figure(4)
 clf()
-semilogx(F, out_vector[:, index, out_coef[-1]]**2)
+plot(F, out_vector[:, index, out_coef[0]]**2)
 ylim(0,1.1)
 
 figure(5)
