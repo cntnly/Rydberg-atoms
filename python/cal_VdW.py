@@ -5,13 +5,12 @@ from matplotlib import *
 from pylab import *
 import builtins
 #import numexpr as ne
-import sys
-path = 'C:/Users/r14/Documents/GitHub/test/python'
+import sys, os
+path = os.path.dirname(os.path.abspath('__file__'))
+#path = 'C:/Users/r14/Documents/GitHub/test/python'
 if path not in sys.path:
     sys.path.append(path)
-
 from imp import reload
-
 if __name__ == '__main__':
     import para
     from para import *
@@ -56,12 +55,14 @@ builtins.Ffield = Ffield*100 # V/m
 coef_F = Ffield*e*a_0/h
 
 from mpl_toolkits.mplot3d import Axes3D
-fig = plt.figure('config')
+fig = plt.figure(0)
 clf()
 ax = fig.gca(projection='3d')
-ax.plot([0,0],[0,0],[0,1],'red')
-ax.plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o')
-ax.plot([0,Ffield*np.sin(theta_F)*np.cos(phi_F)],[0,Ffield*np.sin(theta_F)*np.sin(phi_F)],[0,Ffield*np.cos(theta_F)])
+ax.plot([0,0],[0,0],[0,1.2],'red') # B_field
+ax.plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o') # atoms
+ax.plot([0,0+Ffield*np.sin(theta_F)*np.cos(phi_F)],[0,0+Ffield*np.sin(theta_F)*np.sin(phi_F)],[0,0+Ffield*np.cos(theta_F)]) # F_field
+#ax._axis3don = False
+ax.set_aspect('auto')
 plt.show()
 
 #check degeneracy
@@ -145,7 +146,7 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
                                         if  pairAB_temp not in Not_list:
                                             N_list.append(pairAB_temp)
     return N_list
-N_list1 = create_base(pair_12, N_list, 5, 20,2, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list, 5, 20,1, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -175,13 +176,13 @@ ylabel('Rel. energy (GHz)')
 # Create interaction Matrix
 length = len(Union_list)
 # create mask
-V_VdW = 0j*np.empty((length,length))
-V_R = 0j*np.empty_like(V_VdW)
-V_A = 0j*np.empty_like(V_VdW)
-V_Stark1 = 0j*np.empty_like(V_VdW)
-V_Stark2 = 0j*np.empty_like(V_VdW)
+V_VdW = 0j*np.zeros((length,length))
+V_R = 0j*np.zeros_like(V_VdW)
+V_A = 0j*np.zeros_like(V_VdW)
+V_Stark1 = 0j*np.zeros_like(V_VdW)
+V_Stark2 = 0j*np.zeros_like(V_VdW)
 # mask to calculate only lower triangular matrix
-mask1 = np.tril(np.ones_like(V_VdW))!=0
+mask1 = (np.tril(np.ones_like(V_VdW))!=0)
 
 #vectorize necessary functions
 rad_vec = np.vectorize(radinte)
@@ -206,7 +207,7 @@ Pair2_n2, Pair2_l2, Pair2_m2, Pair2_Erad2 = Pair2_n2[mask1], Pair2_l2[mask1], Pa
 
 V_A[mask1] = A_vec(Pair1_l1, Pair1_m1, Pair1_l2, Pair1_m2, Pair2_l1, Pair2_m1, Pair2_l2, Pair2_m2, theta)
 # Choose only elements different from 0
-mask2 = V_A[mask1] !=0
+mask2 = (V_A[mask1] !=0)
 V_R[V_A!=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)*rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
 V_VdW[V_A!=0] = V_R[V_A!=0]*V_A[V_A!=0]
 V_VdW = V_VdW + V_VdW.T.conj() - np.diag(V_VdW.diagonal())
@@ -220,27 +221,27 @@ colorbar()
 V_R = np.zeros_like(V_VdW)
 V_A = np.zeros_like(V_VdW)
 V_A[mask1] = A_Stark_vec(Pair1_l1, Pair1_m1, Pair2_l1, Pair2_m1, theta_F, phi_F)*(Pair1_n2 == Pair2_n2) *(Pair1_l2 == Pair2_l2)*(Pair1_m2 == Pair2_m2)
-mask2 = V_A[mask1] !=0
+mask2 = (V_A[mask1] !=0)
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)
     V_Stark1[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
     V_Stark1 = V_Stark1 + V_Stark1.T.conj() - np.diag(V_Stark1.diagonal())
     V_Stark1 = V_Stark1*1e-9
 subplot(2,2,3)
-imshow(np.imag(V_Stark1))
+imshow(np.real(V_Stark1))
 colorbar()
 
 V_R = np.zeros_like(V_VdW)
 V_A = np.zeros_like(V_VdW)
 V_A[mask1] = A_Stark_vec(Pair1_l2, Pair1_m2, Pair2_l2, Pair2_m2, theta_F, phi_F)*(Pair1_n1 == Pair2_n1) *(Pair1_l1 == Pair2_l1)*(Pair1_m1 == Pair2_m1)
-mask2 = V_A[mask1] !=0
+mask2 = (V_A[mask1] !=0)
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
     V_Stark2[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
     V_Stark2 = V_Stark2 + V_Stark2.T.conj() - np.diag(V_Stark2.diagonal())
     V_Stark2 = V_Stark2*1e-9
 subplot(2,2,4)
-imshow(np.imag(V_Stark2))
+imshow(np.real(V_Stark2))
 colorbar()
 
 # Zero-th Energy
@@ -287,11 +288,11 @@ out_vec1 = np.asarray([out_vector[i,:,out_coef[0,i]] for i in range(R_num)])
 #loglog(R, asarray(out_egr), R, asarray(out_egr1), '+')
 #xlabel('$R (\mu$m)')
 #ylabel('Rel. energy (GHz)')
-#figure(5);clf();
 
+figure(5);clf();
 pcolor(R,np.arange(length),out_vec1.T**2)
-xlim(R_min, R_max), ylim(ymax= length)
-xscale('log')
+xlim(R_min, R_max), ylim(ymin = max(index1 -100,0),ymax= min(index1+100,length-1))
+tick_params(which='both', direction='out')
 
 #loglog(R, -asarray(out_egr), R, -asarray(out_egr1), '+')
 #semilogx(R, out_egr[:,index3])
@@ -311,7 +312,7 @@ clf()
 #semilogx(R, out_egr2)
 semilogx(R, out_egr, R, out_egr1, '+')
 xlim(R_min, R_max)
-ylim(out_egr1[-1]-0.1, out_egr1[-1]+0.1)
+ylim(out_egr1[-1]-0.05, out_egr1[-1]+0.1)
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 
@@ -344,6 +345,7 @@ figure(4)
 clf()
 loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
 #loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
+xlim(R_min, R_max)
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 print('C6 = {0} GHz.um^6'.format(popt1))
@@ -352,7 +354,7 @@ print('R_1 MHz = {0} um'.format(R[np.max(np.where(abs(out_egr1-offset1)>1e-3))])
 figure(6);clf()
 #semilogx(R, out_vector[:, index1, out_coef[0,-1]]**2)
 semilogx(R, asarray([out_vector[i, index1, out_coef[0,i]] for i in range(R_num)])**2)
-
+xlim(R_min, R_max)
 #popt3,pcov3 = curve_fit(VdW, R[100:], abs(out_egr3[100:]- pair_56.E_Zeeman+ pair_12.E_Zeeman))
 #popt4,pcov4 = curve_fit(VdW, R[100:], abs(out_egr4[100:]- pair_78.E_Zeeman+ pair_12.E_Zeeman))
 if index2 != index1:
@@ -369,9 +371,12 @@ if index2 != index1:
     loglog(R, abs(pow_fit(R, *popt2)), R,abs(out_egr2-offset2),'wo')
     print(popt2)
   
-
-x=where(out_vec1[50]*2>0.1)
-[Union_list[i] for i in x[0]]
+for i in range(R_num):
+    x=where(out_vec1[i]**2>0.05)
+    if len(x[0]) >1:
+        print('At R = {0} um, prop > 5% are:'.format(R[i]))
+        print([Union_list[elm] for elm in x[0]])
+        break
 
 
 
