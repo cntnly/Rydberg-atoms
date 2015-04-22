@@ -92,6 +92,8 @@ class Ryd_atom(object):
 #    def E_Zeeman(self, B_field):
 #        return self.En + Zeemanshift(self.l, self.m, B_field)
     def __repr__(self):
+        if (self.n-1 == self.l)&(self.m ==self.l):
+            return 'atom {0:0.0f}C'.format(self.n)
         return "atom {0}, {1}, {2}".format(self.n, self.l, self.m)
     def __eq__(self, other):
         return (self.n, self.l, self.m) == (other.n, other.l, other.m)
@@ -112,7 +114,7 @@ class Ryd_pair (object):
         
             
     def __repr__(self):
-        return '{0} and {1} \n'.format(self.atom1, self.atom2)
+        return '{0} and {1}'.format(self.atom1, self.atom2)
     def __eq__(self, other):
         return (self.atom1 == other.atom1) & (self.atom2 == other.atom2)
 def pair_invert(pair):

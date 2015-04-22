@@ -55,15 +55,14 @@ builtins.Ffield = Ffield*100 # V/m
 coef_F = Ffield*e*a_0/h
 
 from mpl_toolkits.mplot3d import Axes3D
-fig = plt.figure(0)
+figure(0)
 clf()
-ax = fig.gca(projection='3d')
-ax.plot([0,0],[0,0],[0,1.2],'red') # B_field
-ax.plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o') # atoms
-ax.plot([0,0+Ffield*np.sin(theta_F)*np.cos(phi_F)],[0,0+Ffield*np.sin(theta_F)*np.sin(phi_F)],[0,0+Ffield*np.cos(theta_F)]) # F_field
-#ax._axis3don = False
-ax.set_aspect('auto')
-plt.show()
+ax=subplot(2,2,1, projection ='3d')
+#ax = fig.gca(projection='3d')
+plot([0,0],[0,0],[0,1.2],'red') # B_field
+plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o') # atoms
+plot([0,0+Ffield*np.sin(theta_F)*np.cos(phi_F)],[0,0+Ffield*np.sin(theta_F)*np.sin(phi_F)],[0,0+Ffield*np.cos(theta_F)]) # F_field
+ax.set_xticks([]);ax.set_yticks([]);ax.set_zticks([]);
 
 #check degeneracy
 N_list = [pair_12]
@@ -146,7 +145,7 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
                                         if  pairAB_temp not in Not_list:
                                             N_list.append(pairAB_temp)
     return N_list
-N_list1 = create_base(pair_12, N_list, 5, 20,1, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list, 5, 20,2, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -166,13 +165,14 @@ print ('Matrix size: {0}'.format(len(Union_list)))
 
 # sort list as energy order
 Union_list = sorted(Union_list, key = lambda energy: energy.E_Zeeman)
-#print(len(Union_list))                    
-figure(1)
-clf()
-subplot(2,2,1)
-plot([(elm.E_Zeeman - pair_12.E_Zeeman)*1e-9 for elm in Union_list],'-o')
-xlabel('List N°')
-ylabel('Rel. energy (GHz)')
+#print(len(Union_list))  
+if __name__ == '__main__':             
+    figure(1)
+    clf()
+    subplot(2,2,1)
+    plot([(elm.E_Zeeman - pair_12.E_Zeeman)*1e-9 for elm in Union_list],'-o')
+    xlabel('List N°')
+    ylabel('Rel. energy (GHz)')
 # Create interaction Matrix
 length = len(Union_list)
 # create mask
@@ -213,10 +213,11 @@ V_VdW[V_A!=0] = V_R[V_A!=0]*V_A[V_A!=0]
 V_VdW = V_VdW + V_VdW.T.conj() - np.diag(V_VdW.diagonal())
 V_VdW = V_VdW*1e-9 # convert to GHz.m^3
 
-figure(1)
-subplot(2,2,2)
-imshow(np.real(V_VdW),)
-colorbar()
+if __name__ == '__main__':             
+    figure(1)
+    subplot(2,2,2)
+    imshow(np.real(V_VdW),)
+    colorbar()
 
 V_R = np.zeros_like(V_VdW)
 V_A = np.zeros_like(V_VdW)
@@ -227,9 +228,10 @@ if len(V_A[V_A!=0])!=0:
     V_Stark1[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
     V_Stark1 = V_Stark1 + V_Stark1.T.conj() - np.diag(V_Stark1.diagonal())
     V_Stark1 = V_Stark1*1e-9
-subplot(2,2,3)
-imshow(np.real(V_Stark1))
-colorbar()
+if __name__ == '__main__':             
+    subplot(2,2,3)
+    imshow(np.real(V_Stark1))
+    colorbar()
 
 V_R = np.zeros_like(V_VdW)
 V_A = np.zeros_like(V_VdW)
@@ -240,9 +242,10 @@ if len(V_A[V_A!=0])!=0:
     V_Stark2[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
     V_Stark2 = V_Stark2 + V_Stark2.T.conj() - np.diag(V_Stark2.diagonal())
     V_Stark2 = V_Stark2*1e-9
-subplot(2,2,4)
-imshow(np.real(V_Stark2))
-colorbar()
+if __name__ == '__main__':             
+    subplot(2,2,4)
+    imshow(np.real(V_Stark2))
+    colorbar()
 
 # Zero-th Energy
 EI = np.diag(np.asarray([elm.E_Zeeman for elm in Union_list]))*1e-9
@@ -259,7 +262,6 @@ else:
 #index2 = Union_list.index(pair_invert(pair_34))
 #index3 = Union_list.index(pair_invert(pair_56))
 #index4 = Union_list.index(pair_invert(pair_78))
-
 out_egr = np.empty((R_num, length))
 out_coef = np.empty((2,R_num))
 out_vector = np.empty((R_num,length, length))
@@ -269,7 +271,14 @@ for i,elm in enumerate(R):
     out_egr[i] , out_vector[i] = np.linalg.eigh(EI + 1e18*V_VdW* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2))
   #  print(out_egr[np.iscomplex(out_egr[i])])
     out_egr[i] = out_egr[i] - pair_12.E_Zeeman*1e-9
-    out_coef[0,i] = np.argmax(abs(out_vector[i][index1,:]))
+    
+    if i == 0:
+        out_coef[0,i] = np.argmax(abs(out_vector[i][index1,:]))
+    else:
+        out_coef[0,i] = np.argmax(abs(out_vector[i][index1,:]))
+        if (out_coef[0,i]!= out_coef[0,i-1]) and abs(out_vector[i][index1, out_coef[0,i-1]]**2 -out_vector[i][index1, out_coef[0,i]]**2) <0.001:
+            #print(i, out_coef[0,i-1], out_vector[i][index1, out_coef[0,i-1]]**2, out_coef[0,i], out_vector[i][index1, out_coef[0,i]]**2 )
+            out_coef[0,i] = out_coef[0,i-1]
     out_coef[1,i] = np.argmax(abs(np.delete(out_vector[i][index2,:],out_coef[0,i])))
     if out_coef[1, i] >= out_coef[0,i]:
         out_coef[1,i] +=1
@@ -279,6 +288,8 @@ out_egr1 = [out_egr[i, out_coef[0,i]] for i in range(R_num)]
 out_egr2 = [out_egr[i, out_coef[1,i]] for i in range(R_num)]
 
 out_vec1 = np.asarray([out_vector[i,:,out_coef[0,i]] for i in range(R_num)])
+if index1!=index2:
+    out_vec2 = np.asarray([out_vector[i,:,out_coef[1,i]] for i in range(R_num)])
 
 
 #figure(2)
@@ -289,22 +300,25 @@ out_vec1 = np.asarray([out_vector[i,:,out_coef[0,i]] for i in range(R_num)])
 #xlabel('$R (\mu$m)')
 #ylabel('Rel. energy (GHz)')
 
-figure(5);clf();
+figure(0);subplot(2,2,2);
 pcolor(R,np.arange(length),out_vec1.T**2)
 xlim(R_min, R_max), ylim(ymin = max(index1 -100,0),ymax= min(index1+100,length-1))
+xscale('log')
+xticks([])
 tick_params(which='both', direction='out')
 
 #loglog(R, -asarray(out_egr), R, -asarray(out_egr1), '+')
 #semilogx(R, out_egr[:,index3])
 #semilogx(R, out_egr[:,index4])
-figure(2)
-clf()
-#semilogx(R, out_egr1)
-#semilogx(R, out_egr2)
-semilogx(R, out_egr, R, out_egr1, '+')
-xlim(R_min, R_max)
-xlabel('$R (\mu$m)')
-ylabel('Rel. energy (GHz)')
+if __name__ == '__main__':
+    figure(2)
+    clf()
+    #semilogx(R, out_egr1)
+    #semilogx(R, out_egr2)
+    semilogx(R, out_egr, R, out_egr1, '+')
+    xlim(R_min, R_max)
+    xlabel('$R (\mu$m)')
+    ylabel('Rel. energy (GHz)')
 
 figure(3)
 clf()
@@ -319,8 +333,8 @@ ylabel('Rel. energy (GHz)')
 #fit data
 def VdW(r,C):
     return C*(r**-6)
-def pow_fit(r,C,n):
-    return C*(r**-6)
+def pow_fit(r,C,p):
+    return C*(r**-p)
 
 #popt,pcov = curve_fit(VdW, R[100:], abs(out_egr1[100:]))
 #popt2,pcov = curve_fit(VdW, R[80:], abs(out_egr2[80:]))
@@ -341,43 +355,83 @@ if k >= i:
 offset2 = offset[k]
 popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
 #popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
-figure(4)
-clf()
-loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
+p1 = round(popt1[1])
+popt1,pcov1 = curve_fit(lambda R, C: pow_fit(R,C,p1), R[100:], out_egr1[100:]-offset1, p0=popt1[0])
+
+figure(0);
+subplot(2,2,3)
+loglog(R,abs(out_egr1-offset1), '+',R, abs(pow_fit(R, popt1, p1)))
+#a,b =ax2.get_ylim()
+loglog(R, R**-3, 'g--', R, 100*R**-6,'b--',linewidth=0.5)
 #loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1-offset1), '+')
 xlim(R_min, R_max)
 xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
-print('C6 = {0} GHz.um^6'.format(popt1))
-print('R_1 MHz = {0} um'.format(R[np.max(np.where(abs(out_egr1-offset1)>1e-3))]))
+#print('R_1 MHz = {0} um'.format(R[np.max(np.where(abs(out_egr1-offset1)>1e-3))]))
 
-figure(6);clf()
+figure(0);subplot(2,2,4)
 #semilogx(R, out_vector[:, index1, out_coef[0,-1]]**2)
 semilogx(R, asarray([out_vector[i, index1, out_coef[0,i]] for i in range(R_num)])**2)
 xlim(R_min, R_max)
+xlabel('$R (\mu$m)')
+ylabel('a.u.')
 #popt3,pcov3 = curve_fit(VdW, R[100:], abs(out_egr3[100:]- pair_56.E_Zeeman+ pair_12.E_Zeeman))
 #popt4,pcov4 = curve_fit(VdW, R[100:], abs(out_egr4[100:]- pair_78.E_Zeeman+ pair_12.E_Zeeman))
 if index2 != index1:
   #  out_egr2 = np.asarray([out_egr[i, out_coef[1,i]] for i in range(R_num)])
     #out_egr2 = out_egr[:, index2]
-    figure(2)
-    loglog(R, asarray(out_egr), R, asarray(out_egr2), '+')
-    figure(5)
-    loglog(R, -asarray(out_egr), R, -asarray(out_egr2), '+')
+#    figure(2)
+#    loglog(R, asarray(out_egr), R, asarray(out_egr2), '+')
+#    figure(5)
+#    loglog(R, -asarray(out_egr), R, -asarray(out_egr2), '+')
+#    figure(3)
+#    semilogx(R, out_egr2, 'wo')
+#    popt2,pcov2 = curve_fit(pow_fit, R[100:], abs(out_egr2[100:]-offset2), p0=(100,6))
+#    figure(4)
+#    loglog(R, abs(pow_fit(R, *popt2)), R,abs(out_egr2-offset2),'wo')
+#    print(popt2)
+    popt2,pcov2 = curve_fit(pow_fit, R[100:], out_egr2[100:]-offset2, p0=(1,3))
+    #popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:]-offset1, p0=(100,6))
+    p2 = round(popt2[1])
+    popt2,pcov2 = curve_fit(lambda R, C: pow_fit(R,C,p2), R[100:], out_egr2[100:]-offset2, p0=popt2[0])
+    
+    figure(0)
+    subplot(2,2,3)
+    loglog(R,abs(out_egr2-offset2), 'wo',R, abs(pow_fit(R, popt2, p2)))
+#    print('C{0:0.0f} = {1} GHz.um^{0:0.0f}'.format(p2,popt2))
     figure(3)
-    semilogx(R, out_egr2, 'wo')
-    popt2,pcov2 = curve_fit(pow_fit, R[100:], abs(out_egr2[100:]-offset2), p0=(100,6))
-    figure(4)
-    loglog(R, abs(pow_fit(R, *popt2)), R,abs(out_egr2-offset2),'wo')
-    print(popt2)
-  
-for i in range(R_num):
-    x=where(out_vec1[i]**2>0.05)
-    if len(x[0]) >1:
-        print('At R = {0} um, prop > 5% are:'.format(R[i]))
-        print([Union_list[elm] for elm in x[0]])
-        break
+    semilogx(R, out_egr2, 'wo')  
+    if __name__ == '__main__':
+        figure(2)
+        semilogx(R, out_egr2, 'wo')
+    
+#    for i in range(R_num):
+#        x=where(out_vec2[i]**2>0.05)
+#        if len(x[0]) >1:
+#            print('At R = {0} um, prop > 5% are:'.format(R[i]))
+#            for elm in x[0]:
+#                print('pair of {0}, at index{1}'.format(Union_list[elm],elm))
+#     #       print([(elm,Union_list[elm]) for elm in x[0]])
+#            break
 
+show()
+print('C{0:0.0f} = {1} GHz.um^{0:0.0f}'.format(p1,popt1))
+if index1!=index2:
+    print('C{0:0.0f} = {1} GHz.um^{0:0.0f}'.format(p2,popt2))
+  
+for i in range(R_num-1, -1,-1):
+    count = 0
+    x=where(out_vec1[i]**2>0.05)
+    if index1 in x[0]:
+        count +=1
+    if (index2!= index1) &(index2 in x[0]):
+        count +=1
+    if len(x[0]) >count:
+        print('At R = {0} um, prop > 5% are:'.format(R[i]))
+        for elm in x[0]:
+            print('pair of {0}, at index {1}'.format(Union_list[elm],elm))
+ #       print([(elm,Union_list[elm]) for elm in x[0]])
+        break
 
 
 #popt1,pcov1 = curve_fit(pow_fit, R[100:], out_egr1[100:])

@@ -1,0 +1,948 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass{article}
+
+    
+    
+    \usepackage{graphicx} % Used to insert images
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{color} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    
+
+    
+    
+    \definecolor{orange}{cmyk}{0,0.4,0.8,0.2}
+    \definecolor{darkorange}{rgb}{.71,0.21,0.01}
+    \definecolor{darkgreen}{rgb}{.12,.54,.11}
+    \definecolor{myteal}{rgb}{.26, .44, .56}
+    \definecolor{gray}{gray}{0.45}
+    \definecolor{lightgray}{gray}{.95}
+    \definecolor{mediumgray}{gray}{.8}
+    \definecolor{inputbackground}{rgb}{.95, .95, .85}
+    \definecolor{outputbackground}{rgb}{.95, .95, .95}
+    \definecolor{traceback}{rgb}{1, .95, .95}
+    % ansi colors
+    \definecolor{red}{rgb}{.6,0,0}
+    \definecolor{green}{rgb}{0,.65,0}
+    \definecolor{brown}{rgb}{0.6,0.6,0}
+    \definecolor{blue}{rgb}{0,.145,.698}
+    \definecolor{purple}{rgb}{.698,.145,.698}
+    \definecolor{cyan}{rgb}{0,.698,.698}
+    \definecolor{lightgray}{gray}{0.5}
+    
+    % bright ansi colors
+    \definecolor{darkgray}{gray}{0.25}
+    \definecolor{lightred}{rgb}{1.0,0.39,0.28}
+    \definecolor{lightgreen}{rgb}{0.48,0.99,0.0}
+    \definecolor{lightblue}{rgb}{0.53,0.81,0.92}
+    \definecolor{lightpurple}{rgb}{0.87,0.63,0.87}
+    \definecolor{lightcyan}{rgb}{0.5,1.0,0.83}
+    
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{VdW for circular Rydberg atoms}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=blue,
+      linkcolor=darkorange,
+      citecolor=darkgreen,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}15}]:} \PY{o}{\PYZpc{}}\PY{k}{pylab} \PY{n}{inline}
+         \PY{c}{\PYZsh{}path = \PYZsq{}/home/2kome/Desktop/testdeck/test1/python/\PYZsq{}}
+         \PY{n}{path} \PY{o}{=} \PY{l+s}{\PYZsq{}}\PY{l+s}{C:}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s}{Users}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s}{r14}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s}{Documents}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s}{GitHub}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s}{test}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s}{python}\PY{l+s}{\PYZsq{}} \PY{c}{\PYZsh{}should be change to the propriate folder}
+         \PY{k}{if} \PY{n}{path} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{sys}\PY{o}{.}\PY{n}{path}\PY{p}{:}
+             \PY{n}{sys}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{path}\PY{p}{)}
+         \PY{k+kn}{import} \PY{n+nn}{os}
+         \PY{n}{os}\PY{o}{.}\PY{n}{chdir}\PY{p}{(}\PY{n}{path}\PY{p}{)}
+         \PY{k+kn}{from} \PY{n+nn}{imp} \PY{k+kn}{import} \PY{n+nb}{reload}
+         \PY{c}{\PYZsh{}\PYZpc{}config InlineBackend.figure\PYZus{}format=\PYZsq{}png\PYZsq{}}
+         \PY{c}{\PYZsh{}pylab.rcParams[\PYZsq{}figure.figsize\PYZsq{}] = (10.0, 8.0)}
+         \PY{n}{pylab}\PY{o}{.}\PY{n}{rcParams}\PY{p}{[}\PY{l+s}{\PYZsq{}}\PY{l+s}{savefig.dpi}\PY{l+s}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{200}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Populating the interactive namespace from numpy and matplotlib
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+WARNING: pylab import has clobbered these variables: ['random', 'e', 'linalg', 'fft', 'power', 'info']
+`\%matplotlib` prevents importing * from pylab and numpy
+    \end{Verbatim}
+
+    \section{\texorpdfstring{\(|60C60C\rangle\)}{\textbar{}60C60C\textbackslash{}rangle}}\label{c60crangle}
+
+Define atom pair to calculate \(C6\). Here is \(|60C60C\rangle\) pair.
+Due to degeneration in the absence of external fields, the coupling can
+be propagated very long to lower \(l\) states, which explosed the basis.
+This was verified by enlarging the cut off of \(l\) and each time the
+value changed dramatically. So let's keep a constant magnetic field of
+\(\sim 10\) G.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}41}]:} \PY{c}{\PYZsh{} Define levels builtins to globalize the parameters}
+         \PY{k+kn}{import} \PY{n+nn}{builtins}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{n1} \PY{o}{=} \PY{l+m+mi}{60}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{l1} \PY{o}{=} \PY{n}{n1}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{m1} \PY{o}{=} \PY{n}{l1}
+         
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{n2} \PY{o}{=} \PY{l+m+mi}{60}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{l2} \PY{o}{=} \PY{n}{n2}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}     
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{m2} \PY{o}{=} \PY{n}{l2}
+         
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Bfield} \PY{o}{=} \PY{l+m+mf}{10.e\PYZhy{}4} \PY{c}{\PYZsh{} Magnetic field from experiment 1 Teslta = 10*4 Gauss}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{l+m+mi}{0}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+\end{Verbatim}
+
+    Set some criterion for the program but mainly not in use now
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}42}]:} \PY{c}{\PYZsh{} Setup criterion}
+         \PY{n}{delta\PYZus{}n\PYZus{}max} \PY{o}{=} \PY{l+m+mi}{6}
+         \PY{n}{l\PYZus{}max} \PY{o}{=} \PY{l+m+mi}{2}
+         \PY{n}{Choice} \PY{o}{=} \PY{l+m+mf}{1e7}\PY{c}{\PYZsh{} cut off energy for 1st order term, in Hz}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{R\PYZus{}test} \PY{o}{=} \PY{l+m+mf}{1e\PYZhy{}6}
+         \PY{n}{Choice2} \PY{o}{=} \PY{l+m+mi}{10}\PY{o}{*} \PY{n}{Choice}
+         
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Choice\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{1e\PYZhy{}1} \PY{c}{\PYZsh{} cut off for Stark shift}
+\end{Verbatim}
+
+    \subsection{B field aligned with pair of
+atoms}\label{b-field-aligned-with-pair-of-atoms}
+
+\subsubsection{No electric field}\label{no-electric-field}
+
+    Define electric field and set up configuration and launch the
+calculation from VdW file
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}18}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mi}{0}\PY{o}{*}\PY{l+m+mf}{1e\PYZhy{}1} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.001}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.001}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 0.0 deg
+B\_field = 10.0 G
+F\_field = 0.0 V/cm
+theta\_F = 0.09 deg
+phi\_F = 0.09 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_7_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_7_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C6 = [ 49.5525243] GHz.um\^{}6
+At R = 2.4740253954047375 um, prop > 5\% are:
+pair of atom 59C and atom 61C, at index 144
+pair of atom 61C and atom 59C, at index 145
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    A Van der Waals potential fits well with the result up to 3 \(\mu\)m
+where the levels mixed (dipole interactions comparable to Zeeman shifts)
+in which the \(|60C60C\rangle\) couple quasi resonance with
+\(|60E60E\rangle\) which leads to \(1/R^3\) interaction. Last figure
+show the contribution from \(|60C60C\rangle\) where from \(\sim 5\mu\)m,
+it is nolonger pure
+
+\(C_6 = 49.55\) GHz\(.\mu\)m\(^6\)
+
+    \subsubsection{Electric field, aligned with magnetic field, atom pair
+aligned to magnetic
+field}\label{electric-field-aligned-with-magnetic-field-atom-pair-aligned-to-magnetic-field}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}19}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mf}{1.e\PYZhy{}1} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 0.0 deg
+B\_field = 10.0 G
+F\_field = 0.1 V/cm
+theta\_F = 0.0 deg
+phi\_F = 0.0 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_10_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_10_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C6 = [ 49.5523487] GHz.um\^{}6
+At R = 2.4740253954047375 um, prop > 5\% are:
+pair of atom 59C and atom 61C, at index 144
+pair of atom 61C and atom 59C, at index 145
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    \(C_6 = 49.55\) GHz\(\mu\)m\(^6\)
+
+More less the same with the above result, which is easily understood
+from the configuration. More than that the propagation of coupling has
+very small effect as the Hamiltonian only couple pair states which
+conserve \(M = m1 + m2\). Now let's tilt the atomic pair to
+perpendicular to the field.
+
+\subsubsection{F field perpendicular to B field which is aligned to pair
+of
+atoms}\label{f-field-perpendicular-to-b-field-which-is-aligned-to-pair-of-atoms}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}20}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{l+m+mi}{0}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mf}{1.e\PYZhy{}2} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mi}{1}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 0.0 deg
+B\_field = 10.0 G
+F\_field = 0.01 V/cm
+theta\_F = 90.0 deg
+phi\_F = 0.0 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_12_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_12_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C4 = [ 2.49046573] GHz.um\^{}4
+At R = 29.999999999999996 um, prop > 5\% are:
+pair of atom 60.0, 58.0, 58.0 and atom 60C, at index 177
+pair of atom 60C and atom 60.0, 58.0, 58.0, at index 179
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    It is complicated due to Stark effect. Let's try with a smaller F field
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}21}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{l+m+mi}{0}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mf}{5.e\PYZhy{}3} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mi}{1}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 0.0 deg
+B\_field = 10.0 G
+F\_field = 0.005 V/cm
+theta\_F = 90.0 deg
+phi\_F = 0.0 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_14_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_14_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C5 = [ 10.20892795] GHz.um\^{}5
+At R = 8.325633024798213 um, prop > 5\% are:
+pair of atom 60.0, 58.0, 58.0 and atom 60C, at index 177
+pair of atom 60C and atom 60.0, 58.0, 58.0, at index 179
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    There is a change from \(1/R^3\) to \(1/R^6\) which is not yet
+understood \textgreater{}``\textless{}
+
+Let's consider the case B // pair. F makes small angle. \#\#\# F
+\textasciitilde{}// B // atom pair\#\#\#
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}43}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{l+m+mi}{0}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mf}{10.e\PYZhy{}3} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 0.0 deg
+B\_field = 10.0 G
+F\_field = 0.01 V/cm
+theta\_F = 9.0 deg
+phi\_F = 0.0 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_16_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_16_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C6 = [ 50.73317894] GHz.um\^{}6
+At R = 3.482238803984437 um, prop > 5\% are:
+pair of atom 60.0, 58.0, 58.0 and atom 60C, at index 177
+pair of atom 60C and atom 60.0, 58.0, 58.0, at index 179
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}60}]:} \PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{;}\PY{n}{semilogx}\PY{p}{(}\PY{n}{R}\PY{p}{,} \PY{n}{out\PYZus{}egr}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{177}\PY{p}{:}\PY{l+m+mi}{182}\PY{p}{]}\PY{p}{)}\PY{p}{;}\PY{n}{ylim}\PY{p}{(}\PY{n}{out\PYZus{}egr1}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{\PYZhy{}}\PY{l+m+mf}{0.05}\PY{p}{,} \PY{n}{out\PYZus{}egr1}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{+}\PY{l+m+mf}{0.05}\PY{p}{)}\PY{p}{;}
+         \PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{;}\PY{n}{imshow}\PY{p}{(}\PY{n}{out\PYZus{}vector}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{177}\PY{p}{:}\PY{l+m+mi}{182}\PY{p}{,}\PY{l+m+mi}{177}\PY{p}{:}\PY{l+m+mi}{182}\PY{p}{]}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{;}\PY{n}{colorbar}\PY{p}{(}\PY{p}{)}
+         \PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{;}\PY{n}{plot}\PY{p}{(}\PY{n}{out\PYZus{}vector}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{177}\PY{p}{,}\PY{l+m+mi}{177}\PY{p}{:}\PY{l+m+mi}{182}\PY{p}{]}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}
+         \PY{n}{subplot}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{;}\PY{n}{plot}\PY{p}{(}\PY{n}{out\PYZus{}vector}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{179}\PY{p}{,}\PY{l+m+mi}{177}\PY{p}{:}\PY{l+m+mi}{182}\PY{p}{]}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}
+         \PY{n}{show}\PY{p}{(}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{n}{Union\PYZus{}list}\PY{p}{[}\PY{l+m+mi}{177}\PY{p}{:}\PY{l+m+mi}{181}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_17_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+[atom 60.0, 58.0, 58.0 and atom 60C, atom 60.0, 59.0, 58.0 and atom 60C, atom 60C and atom 60.0, 58.0, 58.0, atom 60C and atom 60.0, 59.0, 58.0]
+    \end{Verbatim}
+
+    \subsection{B field perpendicular to pair of
+atoms}\label{b-field-perpendicular-to-pair-of-atoms}
+
+\subsubsection{No electric field}\label{no-electric-field}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}22}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mi}{0}\PY{o}{*}\PY{l+m+mf}{1.e\PYZhy{}1} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 90.0 deg
+B\_field = 10.0 G
+F\_field = 0.0 V/cm
+theta\_F = 0.0 deg
+phi\_F = 0.0 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_19_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_19_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C6 = [ 30.76966515] GHz.um\^{}6
+At R = 4.8182599654372344 um, prop > 5\% are:
+pair of atom 60.0, 58.0, 58.0 and atom 60.0, 58.0, 58.0, at index 173
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    The coupling is more complicated as much more levels contribute. The
+effect of degeneration is much more crutial. Van der Waals still fits as
+magnetic field lift up the degeneracies.
+
+\(C_6 = 30.77\) GHz.\(\mu m^6\). The anti crossing is at about
+\(3 \mu\)m.
+
+\subsubsection{Weak electric field}\label{weak-electric-field}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}23}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mf}{1.e\PYZhy{}1} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 90.0 deg
+B\_field = 10.0 G
+F\_field = 0.1 V/cm
+theta\_F = 0.0 deg
+phi\_F = 0.0 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_21_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_21_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C6 = [ 54.42595878] GHz.um\^{}6
+At R = 6.226314108246262 um, prop > 5\% are:
+pair of atom 60.0, 58.0, 58.0 and atom 60.0, 58.0, 58.0, at index 173
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    The crossing point is moved to larger distances as the Stark effect
+starts to take over the Zeeman splitting.
+
+\(C_6 = 54.4\) GHz.\(\mu m^6\) up to \(\sim 5 \mu\)m. To \(\sim 10\mu\)m
+the pair is still more less pure circular. Increase \(l\) terms yields
+\(C_6 = 53.25\) GHz.\(\mu m^6\). If we put in a little bit stronger
+field, levels are mixed up and the mess happens (verified for 200 mV/cm)
+
+\subsubsection{Strong electric field}\label{strong-electric-field}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}24}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mf}{1.e\PYZhy{}0} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 90.0 deg
+B\_field = 10.0 G
+F\_field = 1.0 V/cm
+theta\_F = 0.0 deg
+phi\_F = 0.0 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_23_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_23_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C6 = [ 21.50986621] GHz.um\^{}6
+At R = 3.7929066150308723 um, prop > 5\% are:
+pair of atom 60.0, 59.0, 58.0 and atom 60.0, 59.0, 58.0, at index 176
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    In fact the levels are mixed up in a complicated way. The
+\(|60C60C\rangle\) is no longer on the top, isolated from the other
+eliptical states. We have to introduce more terms into our basis. The
+result here is \textbf{not trustable}.
+
+\subsubsection{Effect of electric field
+alignment}\label{effect-of-electric-field-alignment}
+
+\paragraph{In plan of B field and atomic
+pair}\label{in-plan-of-b-field-and-atomic-pair}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}25}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mf}{1.e\PYZhy{}2} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 90.0 deg
+B\_field = 10.0 G
+F\_field = 0.01 V/cm
+theta\_F = 9.0 deg
+phi\_F = 0.0 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_25_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_25_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C6 = [ 29.24132198] GHz.um\^{}6
+At R = 4.8182599654372344 um, prop > 5\% are:
+pair of atom 60.0, 58.0, 58.0 and atom 60.0, 58.0, 58.0, at index 173
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    \(C_6 \sim 33\) GHz\(.\mu m^6\) which is close to the VdW shift due to
+the \(z\) component of the field. Larger than \(10 \mu\)m, the pair
+energy is lightly attractive. This may be caused coupling with higher
+order due to complicated Stark effect created by \(x\) component of the
+electric field.
+
+\paragraph{Perpendicular to plan of B field and atomic
+pair}\label{perpendicular-to-plan-of-b-field-and-atomic-pair}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}26}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mf}{1.e\PYZhy{}2} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{1.}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 60C
+theta = 90.0 deg
+B\_field = 10.0 G
+F\_field = 0.01 V/cm
+theta\_F = 9.0 deg
+phi\_F = 90.0 deg
+Matrix size: 482
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_27_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_27_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C6 = [ 32.00307111] GHz.um\^{}6
+At R = 4.901318761924517 um, prop > 5\% are:
+pair of atom 60.0, 58.0, 58.0 and atom 60.0, 58.0, 58.0, at index 173
+pair of atom 60C and atom 60C, at index 181
+    \end{Verbatim}
+
+    The declination of the electric field has small effect on the
+interaction as expected. However it modifies a little bit when the atoms
+are furthur away as the Stark effect increases the detuning b/w levels.
+\(C_6 = 33\) GHz\(.\mu m^6\)
+
+\subsubsection{B parallel to pair of atoms, F
+perpendicular}\label{b-parallel-to-pair-of-atoms-f-perpendicular}
+
+    \section{\texorpdfstring{\(|60C61C\rangle\)}{\textbar{}60C61C\textbackslash{}rangle}}\label{c61crangle}
+
+\subsection{No electric field, B field parallel pair of
+atoms}\label{no-electric-field-b-field-parallel-pair-of-atoms}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}39}]:} \PY{c}{\PYZsh{} Define levels builtins to globalize the parameters}
+         \PY{k+kn}{import} \PY{n+nn}{builtins}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{n1} \PY{o}{=} \PY{l+m+mi}{60}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{l1} \PY{o}{=} \PY{n}{n1}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{m1} \PY{o}{=} \PY{n}{l1}
+         
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{n2} \PY{o}{=} \PY{l+m+mi}{61}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{l2} \PY{o}{=} \PY{n}{n2}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}     
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{m2} \PY{o}{=} \PY{n}{l2}
+         
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Bfield} \PY{o}{=} \PY{l+m+mf}{10.e\PYZhy{}4} \PY{c}{\PYZsh{} Magnetic field from experiment 1 Teslta = 10*4 Gauss}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{l+m+mi}{0}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         
+         \PY{c}{\PYZsh{} Setup criterion}
+         \PY{n}{delta\PYZus{}n\PYZus{}max} \PY{o}{=} \PY{l+m+mi}{6}
+         \PY{n}{l\PYZus{}max} \PY{o}{=} \PY{l+m+mi}{2}
+         \PY{n}{Choice} \PY{o}{=} \PY{l+m+mf}{1e7}\PY{c}{\PYZsh{} cut off energy for 1st order term, in Hz}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{R\PYZus{}test} \PY{o}{=} \PY{l+m+mf}{1e\PYZhy{}6}
+         \PY{n}{Choice2} \PY{o}{=} \PY{l+m+mi}{10}\PY{o}{*} \PY{n}{Choice}
+         
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Choice\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{1e\PYZhy{}1} \PY{c}{\PYZsh{} cut off for Stark shift}
+         
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{Ffield} \PY{o}{=} \PY{l+m+mi}{0}\PY{o}{*}\PY{l+m+mf}{1e\PYZhy{}1} \PY{c}{\PYZsh{} V/cm}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{theta\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.001}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F field and magnetic field}
+         \PY{n}{builtins}\PY{o}{.}\PY{n}{phi\PYZus{}F} \PY{o}{=} \PY{l+m+mf}{0.001}\PY{o}{*}\PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between F\PYZus{}field and magnetic field , atom pair plan}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 61C
+theta = 0.0 deg
+B\_field = 10.0 G
+F\_field = 0.0 V/cm
+theta\_F = 0.09 deg
+phi\_F = 0.09 deg
+Matrix size: 847
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_30_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_30_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C3 = [ 6.42475142] GHz.um\^{}3
+C3 = [-6.31526973] GHz.um\^{}3
+At R = 1.5595191668205517 um, prop > 5\% are:
+pair of atom 59C and atom 62C, at index 189
+pair of atom 62C and atom 59C, at index 190
+pair of atom 60C and atom 61C, at index 285
+pair of atom 61C and atom 60C, at index 286
+    \end{Verbatim}
+
+    \(|60C61C\rangle\) and \(61C60C\rangle\) are resonantly coupled
+\(\longrightarrow 1/R^3\) behaviour.
+
+\$C\_3A =6.41, C\_3S =6.32 \$ GHz\(\mu m^3\)
+
+\subsubsection{pair of atoms perpendicular to the B
+field}\label{pair-of-atoms-perpendicular-to-the-b-field}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}40}]:} \PY{n}{builtins}\PY{o}{.}\PY{n}{theta} \PY{o}{=} \PY{n}{pi}\PY{o}{/}\PY{l+m+mi}{2} \PY{c}{\PYZsh{} angle between magnetic field (quantization axis) and atom pair}
+         \PY{o}{\PYZpc{}}\PY{k}{run} \PY{o}{\PYZhy{}}\PY{n}{n} \PY{n}{cal\PYZus{}VdW}\PY{o}{.}\PY{n}{py}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+atom 60C and atom 61C
+theta = 90.0 deg
+B\_field = 10.0 G
+F\_field = 0.0 V/cm
+theta\_F = 0.09 deg
+phi\_F = 0.09 deg
+Matrix size: 847
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}r14\textbackslash{}Documents\textbackslash{}GitHub\textbackslash{}test\textbackslash{}python\textbackslash{}cal\_VdW.py:271: ComplexWarning: Casting complex values to real discards the imaginary part
+  out\_egr[i] , out\_vector[i] = np.linalg.eigh(EI + 1e18*V\_VdW* coef/(elm**3) + coef\_F*(V\_Stark1 + V\_Stark2))
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_32_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{VdW for circular Rydberg atoms_files/VdW for circular Rydberg atoms_32_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+C3 = [ 3.27819811] GHz.um\^{}3
+C3 = [-3.09313414] GHz.um\^{}3
+At R = 4.348644533681211 um, prop > 5\% are:
+pair of atom 60.0, 58.0, 58.0 and atom 61.0, 59.0, 59.0, at index 259
+pair of atom 61.0, 59.0, 59.0 and atom 60.0, 58.0, 58.0, at index 269
+pair of atom 60C and atom 61C, at index 285
+pair of atom 61C and atom 60C, at index 286
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}36}]:} \PY{k+kn}{from} \PY{n+nn}{IPython.display} \PY{k+kn}{import} \PY{n}{HTML}
+         \PY{n}{HTML}\PY{p}{(}\PY{l+s}{\PYZsq{}\PYZsq{}\PYZsq{}}\PY{l+s}{\PYZlt{}script type=}\PY{l+s}{\PYZdq{}}\PY{l+s}{text/javascript}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZgt{}}
+         \PY{l+s}{    on = }\PY{l+s}{\PYZdq{}}\PY{l+s}{View input}\PY{l+s}{\PYZdq{}}\PY{l+s}{;}
+         \PY{l+s}{    off = }\PY{l+s}{\PYZdq{}}\PY{l+s}{Hide input}\PY{l+s}{\PYZdq{}}
+         \PY{l+s}{    function onoff()\PYZob{}}
+         \PY{l+s}{      currentvalue = document.getElementById(}\PY{l+s}{\PYZsq{}}\PY{l+s}{onoff}\PY{l+s}{\PYZsq{}}\PY{l+s}{).value;}
+         \PY{l+s}{      if(currentvalue == off)\PYZob{}}
+         \PY{l+s}{        document.getElementById(}\PY{l+s}{\PYZdq{}}\PY{l+s}{onoff}\PY{l+s}{\PYZdq{}}\PY{l+s}{).value=on;}
+         \PY{l+s}{          \PYZdl{}(}\PY{l+s}{\PYZsq{}}\PY{l+s}{div.input}\PY{l+s}{\PYZsq{}}\PY{l+s}{).hide();}
+         \PY{l+s}{      \PYZcb{}else\PYZob{}}
+         \PY{l+s}{        document.getElementById(}\PY{l+s}{\PYZdq{}}\PY{l+s}{onoff}\PY{l+s}{\PYZdq{}}\PY{l+s}{).value=off;}
+         \PY{l+s}{          \PYZdl{}(}\PY{l+s}{\PYZsq{}}\PY{l+s}{div.input}\PY{l+s}{\PYZsq{}}\PY{l+s}{).show();}
+         \PY{l+s}{      \PYZcb{}}
+         \PY{l+s}{\PYZcb{}}
+         \PY{l+s}{\PYZlt{}/script\PYZgt{}}
+         \PY{l+s}{\PYZlt{}input type=}\PY{l+s}{\PYZdq{}}\PY{l+s}{button}\PY{l+s}{\PYZdq{}}\PY{l+s}{ class=}\PY{l+s}{\PYZdq{}}\PY{l+s}{ui\PYZhy{}button ui\PYZhy{}widget ui\PYZhy{}state\PYZhy{}default ui\PYZhy{}corner\PYZhy{}all ui\PYZhy{}button\PYZhy{}text\PYZhy{}only}\PY{l+s}{\PYZdq{}}\PY{l+s}{ value=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Hide input}\PY{l+s}{\PYZdq{}}\PY{l+s}{ id=}\PY{l+s}{\PYZdq{}}\PY{l+s}{onoff}\PY{l+s}{\PYZdq{}}\PY{l+s}{ onclick=}\PY{l+s}{\PYZdq{}}\PY{l+s}{onoff();}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZgt{}.}\PY{l+s}{\PYZsq{}\PYZsq{}\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+            \begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}36}]:} <IPython.core.display.HTML at 0xa5ce128>
+\end{Verbatim}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}}]:} 
+\end{Verbatim}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}
