@@ -145,7 +145,7 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
                                         if  pairAB_temp not in Not_list:
                                             N_list.append(pairAB_temp)
     return N_list
-N_list1 = create_base(pair_12, N_list, 5, 20,2, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list, 0, 20,3, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -250,7 +250,7 @@ if __name__ == '__main__':
 # Zero-th Energy
 EI = np.diag(np.asarray([elm.E_Zeeman for elm in Union_list]))*1e-9
 
-R_max = 30 #in um
+R_max = 100 #in um
 R_min = 1.
 #R = R_max
 R_num = 200 # step in logarithm
@@ -301,8 +301,8 @@ if index1!=index2:
 #ylabel('Rel. energy (GHz)')
 
 figure(0);subplot(2,2,2);
-pcolor(R,np.arange(length),out_vec1.T**2)
-xlim(R_min, R_max), ylim(ymin = max(index1 -100,0),ymax= min(index1+100,length-1))
+pcolor(R,np.arange(length+1)-0.5,out_vec1.T**2)
+xlim(R_min, R_max), ylim(ymin = max(index1 -100.5,-0.5),ymax= min(index1+100.5,length-.5))
 xscale('log')
 xticks([])
 tick_params(which='both', direction='out')
@@ -439,3 +439,5 @@ for i in range(R_num-1, -1,-1):
 #clf()
 #loglog(R, abs(pow_fit(R, *popt1)), R,abs(out_egr1))
 #print(popt1)
+def index(arg):
+    return max(where(R<=arg)[0])
