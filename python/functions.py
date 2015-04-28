@@ -43,12 +43,12 @@ def A_Stark (lA, mA, lAp, mAp, theta, phi):
     A = (1-2*((1-lAp + lA - mA)%2))*np.sqrt((2*lA + 1)*(2*lAp + 1))*Wigner3j(lA, 1, lAp, 0,0,0)
     return A*S
     
-def A_Stark_atom(atomA, atomAp):
+def A_Stark_atom(atomA, atomAp, theta=theta_F, phi=phi_F):
     """
     A_Stark_atom(atomA, atomAp)
     Calculate angular integral for Stark shift, case F aligned with quantization axis
     """
-    return A_Stark(atomA.l, atomA.m, atomAp.l, atomAp.m, theta_F, phi_F)
+    return A_Stark(atomA.l, atomA.m, atomAp.l, atomAp.m, theta, phi)
     
 def R_Int(pairAB, pairABp):
     """
