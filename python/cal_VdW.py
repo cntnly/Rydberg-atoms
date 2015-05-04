@@ -145,7 +145,7 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
                                         if  pairAB_temp not in Not_list:
                                             N_list.append(pairAB_temp)
     return N_list
-N_list1 = create_base(pair_12, N_list, 0, 20,3, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list, 0, 20,2, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -176,11 +176,11 @@ if __name__ == '__main__':
 # Create interaction Matrix
 length = len(Union_list)
 # create mask
-V_VdW = 0j*np.zeros((length,length))
-V_R = 0j*np.zeros_like(V_VdW)
-V_A = 0j*np.zeros_like(V_VdW)
-V_Stark1 = 0j*np.zeros_like(V_VdW)
-V_Stark2 = 0j*np.zeros_like(V_VdW)
+V_VdW = np.zeros((length,length))
+V_R = np.zeros_like(V_VdW)
+V_A = np.zeros_like(V_VdW)
+V_Stark1 = np.zeros_like(V_VdW)
+V_Stark2 = np.zeros_like(V_VdW)
 # mask to calculate only lower triangular matrix
 mask1 = (np.tril(np.ones_like(V_VdW))!=0)
 
@@ -210,13 +210,13 @@ V_A[mask1] = A_vec(Pair1_l1, Pair1_m1, Pair1_l2, Pair1_m2, Pair2_l1, Pair2_m1, P
 mask2 = (V_A[mask1] !=0)
 V_R[V_A!=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)*rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
 V_VdW[V_A!=0] = V_R[V_A!=0]*V_A[V_A!=0]
-V_VdW = V_VdW + V_VdW.T.conj() - np.diag(V_VdW.diagonal())
+V_VdW = V_VdW + V_VdW.T - np.diag(V_VdW.diagonal())
 V_VdW = V_VdW*1e-9 # convert to GHz.m^3
 
 if __name__ == '__main__':             
     figure(1)
     subplot(2,2,2)
-    imshow(np.real(V_VdW),)
+    imshow(V_VdW)
     colorbar()
 
 V_R = np.zeros_like(V_VdW)
@@ -226,11 +226,11 @@ mask2 = (V_A[mask1] !=0)
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)
     V_Stark1[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
-    V_Stark1 = V_Stark1 + V_Stark1.T.conj() - np.diag(V_Stark1.diagonal())
+    V_Stark1 = V_Stark1 + V_Stark1.T - np.diag(V_Stark1.diagonal())
     V_Stark1 = V_Stark1*1e-9
 if __name__ == '__main__':             
     subplot(2,2,3)
-    imshow(np.real(V_Stark1))
+    imshow(V_Stark1)
     colorbar()
 
 V_R = np.zeros_like(V_VdW)
@@ -240,11 +240,11 @@ mask2 = (V_A[mask1] !=0)
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
     V_Stark2[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
-    V_Stark2 = V_Stark2 + V_Stark2.T.conj() - np.diag(V_Stark2.diagonal())
+    V_Stark2 = V_Stark2 + V_Stark2.T - np.diag(V_Stark2.diagonal())
     V_Stark2 = V_Stark2*1e-9
 if __name__ == '__main__':             
     subplot(2,2,4)
-    imshow(np.real(V_Stark2))
+    imshow(V_Stark2)
     colorbar()
 
 # Zero-th Energy

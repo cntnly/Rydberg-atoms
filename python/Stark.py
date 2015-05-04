@@ -43,8 +43,8 @@ Choice_F = (coef_F*coef_F)/Choice_F
 atom = Ryd_atom(n1, l1, m1)
 print(atom)
 print('B_field = {0} G'.format(Bfield*1e4))
-print('theta_F = {0} deg'.format(theta_F*180/pi))
-print('phi_F = {0} deg'.format(phi_F*180/pi))
+#print('theta_F = {0} deg'.format(theta_F*180/pi))
+#print('phi_F = {0} deg'.format(phi_F*180/pi))
 from mpl_toolkits.mplot3d import Axes3D
 
 fig = plt.figure(0)
@@ -93,15 +93,18 @@ def Search_Stark_level(atom, Not_list, Choice, delta_n_max):
 #Union_list = N_list + N_list2
 
 #============= Create base 
-for n in arange(atom.n -15, atom.n +16, 1):
-    for l in arange(max(0, atom.l -6), min(n,atom.l +6.1),1):
-        for m in arange(-l, l+0.1,1):
-            if abs(m -atom.m) < 5:
-                atom_temp = Ryd_atom(n, l, m)
-                if abs(atom_temp.En - atom.En) < 140e9:
-                    if  atom_temp not in N_list:
-                        N_list.append(atom_temp)
-Union_list = N_list
+def stark_base(N_list, delta_n, delta_l, delta_m, delta_E):
+    for n in arange(atom.n -delta_n, atom.n +delta_n+0.1, 1):
+        for l in arange(max(0, atom.l -delta_l), min(n,atom.l +delta_l +.1),1):
+            for m in arange(-l, l+0.1,1):
+                if abs(m -atom.m) < delta_m:
+                    atom_temp = Ryd_atom(n, l, m)
+                    if abs(atom_temp.En - atom.En) < delta_E:
+                        if  atom_temp not in N_list:
+                            N_list.append(atom_temp)
+    return N_list
+
+Union_list = stark_base(N_list, 3,30,5,1e11)
 #=============================
 
 Union_list = sorted(Union_list, key = lambda energy: energy.En)
@@ -114,9 +117,9 @@ ylabel('Rel. energy (GHz)')
 # Create interaction Matrix
 length = len(Union_list)
 # create mask
-V_Stark = 0j*np.zeros((length,length))
-V_R = 0j*np.zeros_like(V_Stark)
-V_A = 0j*np.zeros_like(V_Stark)
+V_Stark = np.zeros((length,length))
+V_R = np.zeros_like(V_Stark)
+V_A = np.zeros_like(V_Stark)
 
 rad_vec = np.vectorize(radinte)
 A_Stark_vec = np.vectorize(A_Stark)
@@ -131,21 +134,21 @@ Atom1_Erad, Atom2_Erad = meshgrid(V_row[:,3],V_row[:,3])
 mask1 = np.tril(np.ones_like(V_Stark))!=0
 Atom1_n, Atom1_l, Atom1_m, Atom1_Erad = Atom1_n[mask1], Atom1_l[mask1], Atom1_m[mask1], Atom1_Erad[mask1]
 Atom2_n, Atom2_l, Atom2_m, Atom2_Erad = Atom2_n[mask1], Atom2_l[mask1], Atom2_m[mask1], Atom2_Erad[mask1]
-V_A[mask1] = A_Stark_vec(Atom1_l, Atom1_m, Atom2_l, Atom2_m, theta_F, phi_F)
+V_A[mask1] = A_Stark_vec(Atom1_l, Atom1_m, Atom2_l, Atom2_m)
 mask2 = V_A[mask1] !=0
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Atom1_Erad[mask2], Atom1_l[mask2], Atom2_Erad[mask2], Atom2_l[mask2], 1)
     V_Stark[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
-    V_Stark = V_Stark + V_Stark.T.conj() - np.diag(V_Stark.diagonal())
+    V_Stark = V_Stark + V_Stark.T - np.diag(V_Stark.diagonal())
     V_Stark = V_Stark*1e-6
 figure(2)
 clf()
 imshow(np.real(V_Stark))
 colorbar()
 
-F_max = .2 #in V/cm
+F_max = 2 #in V/cm
 F_min = 0.
-F_num = 200 # step in linear 
+F_num = 50 # step in linear 
 index = Union_list.index(atom)
 
 # Zero-th Energy
@@ -162,28 +165,28 @@ for i,elm in enumerate(F*100):
     out_egr[i] , out_vector[i] = np.linalg.eigh(EI + elm*coef_F*V_Stark )
     out_egr[i] = out_egr[i] - atom.En*1e-6
     out_coef[i] = np.argmax((out_vector[i][index,:])**2)
-    out_coef2[i] = np.argmax((out_vector[i][19,:])**2)
+ #   out_coef2[i] = np.argmax((out_vector[i][19,:])**2)
 out_egr1 = np.asarray([out_egr[i, out_coef[i]] for i in range(F_num)])
-out_egr2 = np.asarray([out_egr[i, out_coef2[i]] for i in range(F_num)])
+#out_egr2 = np.asarray([out_egr[i, out_coef2[i]] for i in range(F_num)])
 
 #out_egr1 = out_egr[:, index]
 
 figure(3)
 clf()
-plot(F, out_egr1, '+', F, out_egr, F, out_egr2,'wo')
+plot(F, out_egr1, '+', F, out_egr,)# F, out_egr2,'wo')
 #ylim(-500.,1000.)
 xlabel('F (V/cm)')
 ylabel('Rel. energy (MHz)')
 
 
 def fit_fun(F, A,n, offset):
-    return A*F**n + offset
+    return A*F**2 + offset
 from scipy.optimize import curve_fit
 popt1,pcov1 = curve_fit(fit_fun, F[:100], out_egr1[:100], p0=(1, 2, 0))
 
 figure(4)
 clf()
-plot(F, out_vector[:, index, out_coef[0]]**2)
+plot(F, asarray([out_vector[i, index, out_coef[i]] for i in range(F_num)])**2)
 ylim(0,1.1)
 
 figure(5)
@@ -195,26 +198,26 @@ ylabel('Rel. energy (MHz)')
 text(0.8, 0, '{atm} \n $\Delta E = {A:10.2f}\\times F^{{\;{n:10.2f}}} $ MHz/(V/cm)${{}}^{{{n:0.2f}}}$'.format(atm =atom, A = popt1[0], n = popt1[1]),  fontsize=14, verticalalignment='center')
 print('Coef = {a} MHz/(V/cm)**{b}'.format(a= popt1[0], b = popt1[1]))
 
-def sandwich(vec1, vec2, ope, epsilon =1e-6):
-    c1, c2 = meshgrid(vec1, vec2)
-    c= c1*c2
-    u1, u2 = where(abs(c)> epsilon)
-    S=0
-    for i in range(len(u1)):
-     #   print(c[u1[i],u2[i]],Union_list[u1[i]], Union_list[u2[i]])
-        S += c[u1[i],u2[i]]*ope(Union_list[u1[i]], Union_list[u2[i]])  
-    return S
-dipole = zeros(F_num)
-for i in range(F_num):
- #   u = np.argmax((out_vector[i][19,:])**2)
-    dipole[i]=sandwich(out_vector[i,:,out_coef[i]],out_vector[0,:,out_coef2[i]],lambda atom1, atom2: radinte_atom(atom1,atom2)*A_Stark_atom(atom1,atom2, 0,0), 1e-3)
-#dipole2 = zeros(F_num)
+#def sandwich(vec1, vec2, ope, epsilon =1e-6):
+#    c1, c2 = meshgrid(vec1, vec2)
+#    c= c1*c2
+#    u1, u2 = where(abs(c)> epsilon)
+#    S=0
+#    for i in range(len(u1)):
+#     #   print(c[u1[i],u2[i]],Union_list[u1[i]], Union_list[u2[i]])
+#        S += c[u1[i],u2[i]]*ope(Union_list[u1[i]], Union_list[u2[i]])  
+#    return S
+#dipole = zeros(F_num)
 #for i in range(F_num):
 # #   u = np.argmax((out_vector[i][19,:])**2)
-#    dipole2[i]=sandwich(out_vector[i,:,out_coef[i]],out_vector[0,:,out_coef2[i]],lambda atom1, atom2: radinte_atom(atom1,atom2)*A_Stark_atom(atom1,atom2, pi/2,0))
-    
-figure(6);
-plot(F, 1e-6*dipole**2,'-',label='{0}'.format(Union_list[19]))
-#plot(F, 1e-6*dipole2**2,'b--')
-legend(loc='best',)
-#ylim(-0.1,3.5)
+#    dipole[i]=sandwich(out_vector[i,:,out_coef[i]],out_vector[0,:,out_coef2[i]],lambda atom1, atom2: radinte_atom(atom1,atom2)*A_Stark_atom(atom1,atom2, 0,0), 1e-3)
+##dipole2 = zeros(F_num)
+##for i in range(F_num):
+## #   u = np.argmax((out_vector[i][19,:])**2)
+##    dipole2[i]=sandwich(out_vector[i,:,out_coef[i]],out_vector[0,:,out_coef2[i]],lambda atom1, atom2: radinte_atom(atom1,atom2)*A_Stark_atom(atom1,atom2, pi/2,0))
+#    
+#figure(6);
+#plot(F, 1e-6*dipole**2,'-',label='{0}'.format(Union_list[19]))
+##plot(F, 1e-6*dipole2**2,'b--')
+#legend(loc='best',)
+##ylim(-0.1,3.5)

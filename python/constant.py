@@ -20,9 +20,9 @@ Ry_Rb87 = Ry/(1+m_e/m_Rb87) # Rydberg constant with mass correction
 #from para import *
 
 # calculate quantum defect
-delta_0 = np.array([3.1311804, 2.6548849, 2.6416737,1.34809171, 1.34646572, 0.0165192, 0.0165437, 0])
-delta_2 = np.array([0.1784, 0.2900, 0.2950, - 0.60286, - 0.59600, - 0.085, - 0.086, 0])
-#delta_0, delta_2 = np.zeros(8), np.zeros(8)
+#delta_0 = np.array([3.1311804, 2.6548849, 2.6416737,1.34809171, 1.34646572, 0.0165192, 0.0165437, 0])
+#delta_2 = np.array([0.1784, 0.2900, 0.2950, - 0.60286, - 0.59600, - 0.085, - 0.086, 0])
+delta_0, delta_2 = np.zeros(8), np.zeros(8)
 def delta(n, lj):
     """
     delta(n.lj)
