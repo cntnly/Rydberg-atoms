@@ -46,10 +46,10 @@ test_term = test_term*test_term
 
 print(pair_12)
 print('theta = {0} deg'.format(theta*180/pi))
-print('B_field = {0} G'.format(Bfield*1e4))
+print('B_field effective = {0} G'.format(Bfield*1e4))
 print('F_field = {0} V/cm'.format(Ffield))
-print('theta_F = {0} deg'.format(theta_F*180/pi))
-print('phi_F = {0} deg'.format(phi_F*180/pi))
+#print('theta_F = {0} deg'.format(theta_F*180/pi))
+#print('phi_F = {0} deg'.format(phi_F*180/pi))
 
 builtins.Ffield = Ffield*100 # V/m
 coef_F = Ffield*e*a_0/h
@@ -59,9 +59,9 @@ figure(0)
 clf()
 ax=subplot(2,2,1, projection ='3d')
 #ax = fig.gca(projection='3d')
-plot([0,0],[0,0],[0,1.2],'red') # B_field
+plot([0,0],[0,0],[0,1.2],'red') # F_field
 plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o') # atoms
-plot([0,0+Ffield*np.sin(theta_F)*np.cos(phi_F)],[0,0+Ffield*np.sin(theta_F)*np.sin(phi_F)],[0,0+Ffield*np.cos(theta_F)]) # F_field
+#plot([0,0+Ffield*np.sin(theta_F)*np.cos(phi_F)],[0,0+Ffield*np.sin(theta_F)*np.sin(phi_F)],[0,0+Ffield*np.cos(theta_F)]) # F_field
 ax.set_xticks([]);ax.set_yticks([]);ax.set_zticks([]);
 
 #check degeneracy
@@ -221,7 +221,7 @@ if __name__ == '__main__':
 
 V_R = np.zeros_like(V_VdW)
 V_A = np.zeros_like(V_VdW)
-V_A[mask1] = A_Stark_vec(Pair1_l1, Pair1_m1, Pair2_l1, Pair2_m1, theta_F, phi_F)*(Pair1_n2 == Pair2_n2) *(Pair1_l2 == Pair2_l2)*(Pair1_m2 == Pair2_m2)
+V_A[mask1] = A_Stark_vec(Pair1_l1, Pair1_m1, Pair2_l1, Pair2_m1)*(Pair1_n2 == Pair2_n2) *(Pair1_l2 == Pair2_l2)*(Pair1_m2 == Pair2_m2)
 mask2 = (V_A[mask1] !=0)
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)
@@ -235,7 +235,7 @@ if __name__ == '__main__':
 
 V_R = np.zeros_like(V_VdW)
 V_A = np.zeros_like(V_VdW)
-V_A[mask1] = A_Stark_vec(Pair1_l2, Pair1_m2, Pair2_l2, Pair2_m2, theta_F, phi_F)*(Pair1_n1 == Pair2_n1) *(Pair1_l1 == Pair2_l1)*(Pair1_m1 == Pair2_m1)
+V_A[mask1] = A_Stark_vec(Pair1_l2, Pair1_m2, Pair2_l2, Pair2_m2)*(Pair1_n1 == Pair2_n1) *(Pair1_l1 == Pair2_l1)*(Pair1_m1 == Pair2_m1)
 mask2 = (V_A[mask1] !=0)
 if len(V_A[V_A!=0])!=0:
     V_R[V_A !=0] = rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
