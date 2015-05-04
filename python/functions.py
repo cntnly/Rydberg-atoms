@@ -24,31 +24,23 @@ try:
 except ImportError:
     raise Exception('No wigner module found')
     
-def A_Stark (lA, mA, lAp, mAp, theta, phi):
+def A_Stark (lA, mA, lAp, mAp):
     """
     A_Stark (lA, mA, lAp, mAp)
     Calculate angular integral for Stark shift,
     F makes with quantization axis (Bfield) angle theta and with Bfield_atom pair plan angle phi
     
     """
-    Fx = np.sin(theta)*np.cos(phi)
-    Fy = np.sin(theta)*np.sin(phi)
-    Fz = np.cos(theta)
     Y10 = Wigner3j(lA, 1, lAp, -mA, 0, mAp)
-    Y11 = Wigner3j(lA, 1, lAp, -mA, 1, mAp)
-    Y12 = Wigner3j(lA, 1, lAp, -mA, -1, mAp)
-    S =  Fx * np.sqrt(0.5) * (Y12 - Y11)
-    S += 1j*Fy * np.sqrt(0.5) * (Y12 + Y11)
-    S += Fz * Y10
     A = (1-2*((1-lAp + lA - mA)%2))*np.sqrt((2*lA + 1)*(2*lAp + 1))*Wigner3j(lA, 1, lAp, 0,0,0)
-    return A*S
+    return A*Y10
     
-def A_Stark_atom(atomA, atomAp, theta=theta_F, phi=phi_F):
+def A_Stark_atom(atomA, atomAp):
     """
     A_Stark_atom(atomA, atomAp)
     Calculate angular integral for Stark shift, case F aligned with quantization axis
     """
-    return A_Stark(atomA.l, atomA.m, atomAp.l, atomAp.m, theta, phi)
+    return A_Stark(atomA.l, atomA.m, atomAp.l, atomAp.m)
     
 def R_Int(pairAB, pairABp):
     """
