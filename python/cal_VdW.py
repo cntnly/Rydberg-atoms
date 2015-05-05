@@ -145,7 +145,7 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
                                         if  pairAB_temp not in Not_list:
                                             N_list.append(pairAB_temp)
     return N_list
-N_list1 = create_base(pair_12, N_list, 0, 20,2, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list,2, 20,2, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -250,7 +250,7 @@ if __name__ == '__main__':
 # Zero-th Energy
 EI = np.diag(np.asarray([elm.E_Zeeman for elm in Union_list]))*1e-9
 
-R_max = 100 #in um
+R_max = 200 #in um
 R_min = 1.
 #R = R_max
 R_num = 200 # step in logarithm
@@ -441,3 +441,14 @@ for i in range(R_num-1, -1,-1):
 #print(popt1)
 def index(arg):
     return max(where(R<=arg)[0])
+def doubled(r,C3,C6):
+    return C3*(r**-3) + C6*(r**-6)    
+popt1,pcov1 = curve_fit(doubled, R[100:], out_egr1[100:]-offset1, p0=(-1,1))
+figure(6); clf();
+loglog(R,abs(out_egr1-offset1), '+',R, abs(doubled(R, *popt1)))
+loglog(R, R**-3, 'g--', R, 100*R**-6,'b--',linewidth=0.5)
+xlim(R_min, R_max)
+xlabel('$R (\mu$m)')
+ylabel('Rel. energy (GHz)')
+
+print(popt1)
