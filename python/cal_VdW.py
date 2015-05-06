@@ -7,6 +7,7 @@ import builtins
 #import numexpr as ne
 import sys, os
 path = os.path.dirname(os.path.abspath('__file__'))
+path= '/home/2kome/Desktop/testdeck/test1/python'
 #path = 'C:/Users/r14/Documents/GitHub/test/python'
 if path not in sys.path:
     sys.path.append(path)
@@ -48,11 +49,15 @@ print(pair_12)
 print('theta = {0} deg'.format(theta*180/pi))
 print('B_field effective = {0} G'.format(Bfield*1e4))
 print('F_field = {0} V/cm'.format(Ffield))
-#print('theta_F = {0} deg'.format(theta_F*180/pi))
-#print('phi_F = {0} deg'.format(phi_F*180/pi))
+print('theta_B = {0} deg'.format(theta_B*180/pi))
+print('phi_B = {0} deg'.format(phi_B*180/pi))
 
 builtins.Ffield = Ffield*100 # V/m
 coef_F = Ffield*e*a_0/h
+
+Bz = Bfield*np.cos(theta_B)*mu_B/h
+Bx = Bfield*np.sin(theta_B)*np.cos(phi_B)*mu_B/h
+By = Bfield*np.sin(theta_B)*np.sin(phi_B)*mu_B/h
 
 from mpl_toolkits.mplot3d import Axes3D
 figure(0)
@@ -61,61 +66,12 @@ ax=subplot(2,2,1, projection ='3d')
 #ax = fig.gca(projection='3d')
 plot([0,0],[0,0],[0,1.2],'red') # F_field
 plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o') # atoms
-#plot([0,0+Ffield*np.sin(theta_F)*np.cos(phi_F)],[0,0+Ffield*np.sin(theta_F)*np.sin(phi_F)],[0,0+Ffield*np.cos(theta_F)]) # F_field
+plot([0,0+Bx],[0,0+By],[0,0+Bz]) # B_field
 ax.set_xticks([]);ax.set_yticks([]);ax.set_zticks([]);
 
 #check degeneracy
 N_list = [pair_12]
-#N_deg=[]
-#for lA in np.arange(max(l1-1, 0), l1+1.1,1):
-#    if lA < n1:
-#        for mA in np.arange(m1-1, m1+ 1.1,1):
-#            if np.abs(mA) <= lA:                 
-#                try:
-#                    atomA_temp = Ryd_atom(n1, lA, mA)
-#                except Exception:
-#                    print(lA, mA)
-#                if np.abs(atomA_temp.E_Zeeman - atom_1.E_Zeeman) < 1e-10:
-#                    for lB in np.arange(max(l2-1, 0), l2+1.1):
-#                        if lB < n2:
-#                            for mB in np.arange(m2-1, m2+ 1.1):
-#                                if np.abs(mB) <= lB:
-#                                    try:
-#                                        atomB_temp = Ryd_atom(n2, lB, mB)
-#                                    except Exception:
-#                                        print (lB, mB)
-#                                    if np.abs(atomB_temp.E_Zeeman - atom_2.E_Zeeman) < 1e-10:
-#                                        #print (atomB_temp)
-#                                        pair_temp = Ryd_pair(atomA_temp, atomB_temp)
-#                                        if pair_temp not in (N_list + N_deg):
-#                                            N_deg.append(pair_temp)
-#deg=len(N_deg)
-#print('Degenerated pairs ={0}'.format(len(N_deg)+1))
-##Search 1st order coupling terms
-#N_list1 = Search_VdW(N_list, N_list + N_deg, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
-#N_list += N_list1 + N_deg
-##N_list1 = Search_VdW(N_list, N_list, test_term, Choice, delta_n_max, l1, l2, 2, m1,m2, 3)
-##N_list += N_list1
-#
-#print ('N_list = {0}'.format(len(N_list)))
-#       
-#
-#for pair in N_list:
-#    if pair_invert(pair) not in N_list:
-#        N_list.append(pair_invert(pair))
-#print ('1st order terms: {0}'.format(len(N_list)))
-#
-#
-## Search for temp coupled by Stark effect
-#N_list_Stark=[]
-#Choice_F = (coef_F*coef_F)/Choice_F
-#for elm in N_list:
-#    N_list_Stark_temp = Search_Stark(elm, N_list + N_list_Stark, Choice_F, delta_n_max)
-#    N_list_Stark += N_list_Stark_temp
-#
-#print('1st order Stark terms: {0}'.format(len(N_list_Stark)))
-#
-#count_doub(N_list, N_list_Stark)
+
 
 #============= Create base =================
 def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
@@ -141,11 +97,11 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
                                         print(nB, lB,mB)                            
                                  #   if abs(atomB_temp.En - atom_2.En) < delta_E:
                                     pairAB_temp = Ryd_pair(atomA_temp, atomB_temp) 
-                                    if abs(pairAB_temp.E_Zeeman - pair_12.E_Zeeman) < delta_E:
+                                    if abs(pairAB_temp.E - pair_12.E) < delta_E:
                                         if  pairAB_temp not in Not_list:
                                             N_list.append(pairAB_temp)
     return N_list
-N_list1 = create_base(pair_12, N_list,2, 20,2, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list,0, 20,2, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -164,7 +120,7 @@ print ('Matrix size: {0}'.format(len(Union_list)))
 #sys.stdout.flush()
 
 # sort list as energy order
-Union_list = sorted(Union_list, key = lambda energy: energy.E_Zeeman)
+Union_list = sorted(Union_list, key = lambda energy: energy.E)
 #print(len(Union_list))  
 if __name__ == '__main__':             
     figure(1)

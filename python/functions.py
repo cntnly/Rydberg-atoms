@@ -41,6 +41,18 @@ def A_Stark_atom(atomA, atomAp):
     Calculate angular integral for Stark shift, case F aligned with quantization axis
     """
     return A_Stark(atomA.l, atomA.m, atomAp.l, atomAp.m)
+def Zeeman(lA, mA, lAp, mAp, Bx0, By0, Bz0):
+    """
+    Zeeman(lA, mA, lAp, mAp, Bx0, By0, Bz0)
+    in unit |B|*mu_B/h
+    """
+    if mA == mAp:
+        return Bz0*mA
+    if mA == mAp+1:
+        return 0.5*np.sqrt(lA*(lA+1) - mA*(mA+1))*(Bx0-1j*By0)
+    if mA == mAp-1:
+        return 0.5*np.sqrt(lA*(lA+1) - mA*(mA-1))*(Bx0+1j*By0)
+
     
 def R_Int(pairAB, pairABp):
     """
