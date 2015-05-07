@@ -34,13 +34,13 @@ def En(n, lj):
     En(n,lj) in Hz
     Energy of Rydberg level with quantum defect
     """
-    return - Ry_Rb87*c/((n-delta(n, lj))**2)
+    return - Ry_Rb87*c/(n**2)
 def E_radinte(n, lj):
     """
     E_radinte(n, lj) in atomic unit
     energy needed for radinte
     """
-    return - 0.5/(1+ m_e/m_Rb87)/((n-delta(n, lj))**2)
+    return - 0.5/(1+ m_e/m_Rb87)/(n**2)
 def choose_lj(l, j):
     """
     choose_lj(l, j)
@@ -67,11 +67,7 @@ def choose_lj(l, j):
     else:
         return 7
 
-def Zeemanshift(l, m, Bfield):
-    """
-    Zeemanshift(l, m, Bfield))
-    """
-    return Bfield * m * mu_B/h
+
 class Ryd_atom(object):
     """
     Ryd_atom(n, l, m)
@@ -88,7 +84,7 @@ class Ryd_atom(object):
         self.m = m
         self.En = En(n, 7) # 10 to ignore the quantum defect
         self.E_radinte = E_radinte(n, 7)
-        self.E_Zeeman = self.En + Zeemanshift(l, m, Bfield)
+#        self.E_Zeeman = self.En + Zeemanshift(l, m, Bfield)
 #    def E_Zeeman(self, B_field):
 #        return self.En + Zeemanshift(self.l, self.m, B_field)
     def __repr__(self):
@@ -101,7 +97,7 @@ class Ryd_atom(object):
 class Ryd_pair (object):
     def __init__(self, atom1, atom2):
         """
-        Define a pair of atom 1 & 2. Return E12, E12_Zeeman
+        Define a pair of atom 1 & 2. Return E12
         """
         if isinstance(atom1, Ryd_atom) & isinstance(atom2, Ryd_atom):
             self.atom1 = atom1
@@ -110,7 +106,7 @@ class Ryd_pair (object):
             raise Exception('input should be of Ryd_atom class')
             pass
         self. E = atom1.En + atom2.En
-        self.E_Zeeman = atom1.E_Zeeman + atom2.E_Zeeman
+#        self.E_Zeeman = atom1.E_Zeeman + atom2.E_Zeeman
         
             
     def __repr__(self):

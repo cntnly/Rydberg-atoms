@@ -21,8 +21,8 @@ builtins.Bfield = 10.e-4 # Magnetic field from experiment 1 Teslta = 10*4 Gauss
 
 builtins.Ffield = 10. # V/cm
 builtins.theta = 0*pi/2#arccos(1./sqrt(3))#1*pi/2
-builtins.theta_F =1*pi/2.
-builtins.phi_F = 0.*pi/2
+builtins.theta_B =1*pi/2.
+builtins.phi_B = 0.*pi/2
 #theta =  0.95531661812450919
 
 # Setup criterion
