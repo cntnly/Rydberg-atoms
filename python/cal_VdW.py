@@ -74,34 +74,8 @@ N_list = [pair_12]
 
 
 #============= Create base =================
-def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
-    atom_1 = pair.atom1
-    atom_2 = pair.atom2
-    N_list = []
-    for nA in arange(atom_1.n -delta_n, atom_1.n +delta_n+0.1, 1):
-        for lA in arange(max(0, atom_1.l -delta_l), min(atom_1.l +delta_l +0.1,nA),1):
-            for mA in arange(-lA, lA+0.1,1):
-                if abs(mA -atom_1.m) <=delta_m:
-                    try:
-                        atomA_temp = Ryd_atom(nA,lA,mA)
-                    except:
-                        print(nA, lA,mA)                            
-                 #   if abs(atomA_temp.En - atom_1.En) < delta_E:
-                    for nB in arange(atom_2.n -delta_n, atom_2.n +delta_n+0.1, 1):
-                        for lB in arange(max(0, atom_2.l -delta_l), min(atom_2.l +delta_l+.1,nB),1):
-                            for mB in arange(-lB, lB+0.1,1):
-                                if abs(mB -atom_2.m) <=delta_m:
-                                    try:
-                                        atomB_temp = Ryd_atom(nB,lB,mB)
-                                    except:
-                                        print(nB, lB,mB)                            
-                                 #   if abs(atomB_temp.En - atom_2.En) < delta_E:
-                                    pairAB_temp = Ryd_pair(atomA_temp, atomB_temp) 
-                                    if abs(pairAB_temp.E - pair_12.E) < delta_E:
-                                        if  pairAB_temp not in Not_list:
-                                            N_list.append(pairAB_temp)
-    return N_list
-N_list1 = create_base(pair_12, N_list,0, 20,2, 100e9/2)                            
+
+N_list1 = create_base(pair_12, N_list,2, 20,2, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -126,17 +100,20 @@ if __name__ == '__main__':
     figure(1)
     clf()
     subplot(2,2,1)
-    plot([(elm.E_Zeeman - pair_12.E_Zeeman)*1e-9 for elm in Union_list],'-o')
+    plot([(elm.E - pair_12.E)*1e-9 for elm in Union_list],'-o')
     xlabel('List N°')
     ylabel('Rel. energy (GHz)')
 # Create interaction Matrix
 length = len(Union_list)
+
 # create mask
 V_VdW = np.zeros((length,length))
 V_R = np.zeros_like(V_VdW)
 V_A = np.zeros_like(V_VdW)
 V_Stark1 = np.zeros_like(V_VdW)
 V_Stark2 = np.zeros_like(V_VdW)
+V_Zeeman = np.zeros_like(V_VdW)
+
 # mask to calculate only lower triangular matrix
 mask1 = (np.tril(np.ones_like(V_VdW))!=0)
 
@@ -144,6 +121,7 @@ mask1 = (np.tril(np.ones_like(V_VdW))!=0)
 rad_vec = np.vectorize(radinte)
 A_vec = np.vectorize(A_Integral)
 A_Stark_vec = np.vectorize(A_Stark)
+A_Zeeman_vec = np.vectorize(A_Zeeman)
 
 V_row = np.asarray([(elm.atom1.n, elm.atom1.l, elm.atom1.m, elm.atom1.E_radinte, elm.atom2.n, elm.atom2.l, elm.atom2.m, elm.atom2.E_radinte) for elm in Union_list])
 Pair1_n1, Pair2_n1 = meshgrid(V_row[:,0],V_row[:,0])
@@ -203,8 +181,20 @@ if __name__ == '__main__':
     imshow(V_Stark2)
     colorbar()
 
+# Zeeman
+V_A = 0j*np.zeros_like(V_VdW)
+V_A[mask1] = A_Zeeman_vec(Pair1_l1, Pair1_m1, Pair2_l1, Pair2_m1, Bx, By, Bz)*(Pair1_n1 == Pair2_n1)*(Pair1_n2 == Pair2_n2) *(Pair1_l2 == Pair2_l2)*(Pair1_m2 == Pair2_m2)
+V_Zeeman += V_A
+
+V_A = 0j*np.zeros_like(V_VdW)
+V_A[mask1] = A_Zeeman_vec(Pair1_l2, Pair1_m2, Pair2_l2, Pair2_m2, Bx, By, Bz)*(Pair1_n2 == Pair2_n2) *(Pair1_n1 == Pair2_n1) *(Pair1_l1 == Pair2_l1)*(Pair1_m1 == Pair2_m1)
+V_Zeeman += V_A
+
+V_Zeeman = V_Zeeman + V_Zeeman.T - np.diag(V_Zeeman.diagonal())
+V_Zeeman = V_Zeeman*1e-9
+    
 # Zero-th Energy
-EI = np.diag(np.asarray([elm.E_Zeeman for elm in Union_list]))*1e-9
+EI = np.diag(np.asarray([elm.E for elm in Union_list]))*1e-9
 
 R_max = 200 #in um
 R_min = 1.
@@ -215,18 +205,16 @@ if pair_invert(pair_12) != pair_12:
     index2 = Union_list.index(pair_invert(pair_12))
 else:
     index2 = index1
-#index2 = Union_list.index(pair_invert(pair_34))
-#index3 = Union_list.index(pair_invert(pair_56))
-#index4 = Union_list.index(pair_invert(pair_78))
+
 out_egr = np.empty((R_num, length))
 out_coef = np.empty((2,R_num))
 out_vector = np.empty((R_num,length, length))
 R = np.logspace(log10(R_min), log10(R_max), num = R_num)
 for i,elm in enumerate(R):
     #out_egr[i] = np.linalg.eigvalsh(EI + V_VdW* coef/(elm**3)) - pair_12.E_Zeeman
-    out_egr[i] , out_vector[i] = np.linalg.eigh(EI + 1e18*V_VdW* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2))
+    out_egr[i] , out_vector[i] = np.linalg.eigh(EI + 1e18*V_VdW* coef/(elm**3) + coef_F*(V_Stark1 + V_Stark2)+ V_Zeeman)
   #  print(out_egr[np.iscomplex(out_egr[i])])
-    out_egr[i] = out_egr[i] - pair_12.E_Zeeman*1e-9
+    out_egr[i] = out_egr[i] - pair_12.E*1e-9
     
     if i == 0:
         out_coef[0,i] = np.argmax(abs(out_vector[i][index1,:]))
@@ -301,8 +289,8 @@ def pow_fit(r,C,p):
 
 from scipy.optimize import curve_fit
 
-offset, off_vec = np.linalg.eigh(EI + coef_F*(V_Stark1 + V_Stark2))
-offset = offset - pair_12.E_Zeeman*1e-9
+offset, off_vec = np.linalg.eigh(EI + coef_F*(V_Stark1 + V_Stark2)+V_Zeeman)
+offset = offset - pair_12.E*1e-9
 i = np.argmax(abs(off_vec[index1,:]))
 offset1 = offset[i]
 k = np.argmax(abs(np.delete(off_vec[index2,:], i)))

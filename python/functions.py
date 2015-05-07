@@ -41,17 +41,22 @@ def A_Stark_atom(atomA, atomAp):
     Calculate angular integral for Stark shift, case F aligned with quantization axis
     """
     return A_Stark(atomA.l, atomA.m, atomAp.l, atomAp.m)
-def Zeeman(lA, mA, lAp, mAp, Bx0, By0, Bz0):
+def A_Zeeman(lA, mA, lAp, mAp, Bx0, By0, Bz0):
     """
-    Zeeman(lA, mA, lAp, mAp, Bx0, By0, Bz0)
+    A_Zeeman(lA, mA, lAp, mAp, Bx0, By0, Bz0)
     in unit |B|*mu_B/h
     """
-    if mA == mAp:
-        return Bz0*mA
-    if mA == mAp+1:
-        return 0.5*np.sqrt(lA*(lA+1) - mA*(mA+1))*(Bx0-1j*By0)
-    if mA == mAp-1:
-        return 0.5*np.sqrt(lA*(lA+1) - mA*(mA-1))*(Bx0+1j*By0)
+    if lA!= lAp:
+        return 0
+    else:
+        if mA == mAp:
+            return Bz0*mA
+        if mA == mAp+1:
+            return 0.5*np.sqrt(lA*(lA+1) - mA*(mA+1))*(Bx0-1j*By0)
+        if mA == mAp-1:
+            return 0.5*np.sqrt(lA*(lA+1) - mA*(mA-1))*(Bx0+1j*By0)
+        else:
+            return 0
 
     
 def R_Int(pairAB, pairABp):
@@ -213,3 +218,31 @@ def count_doub(list1, list2):
         if elm in list2:
             count +=1
     return count
+    
+def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
+    atom_1 = pair.atom1
+    atom_2 = pair.atom2
+    N_list = []
+    for nA in arange(atom_1.n -delta_n, atom_1.n +delta_n+0.1, 1):
+        for lA in arange(max(0, atom_1.l -delta_l), min(atom_1.l +delta_l +0.1,nA),1):
+            for mA in arange(-lA, lA+0.1,1):
+                if abs(mA -atom_1.m) <=delta_m:
+                    try:
+                        atomA_temp = Ryd_atom(nA,lA,mA)
+                    except:
+                        print(nA, lA,mA)                            
+                 #   if abs(atomA_temp.En - atom_1.En) < delta_E:
+                    for nB in arange(atom_2.n -delta_n, atom_2.n +delta_n+0.1, 1):
+                        for lB in arange(max(0, atom_2.l -delta_l), min(atom_2.l +delta_l+.1,nB),1):
+                            for mB in arange(-lB, lB+0.1,1):
+                                if abs(mB -atom_2.m) <=delta_m:
+                                    try:
+                                        atomB_temp = Ryd_atom(nB,lB,mB)
+                                    except:
+                                        print(nB, lB,mB)                            
+                                 #   if abs(atomB_temp.En - atom_2.En) < delta_E:
+                                    pairAB_temp = Ryd_pair(atomA_temp, atomB_temp) 
+                                    if abs(pairAB_temp.E - pair.E) < delta_E:
+                                        if  pairAB_temp not in Not_list:
+                                            N_list.append(pairAB_temp)
+    return N_list
