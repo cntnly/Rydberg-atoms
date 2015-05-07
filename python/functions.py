@@ -17,7 +17,7 @@ def radinte_atom(atomA, atomAp, I =1):
     """
     radinte_atom(atomA, atomAp, I =1)
     Calculate radinte for pair of atoms"""
-    return radinte(atomA.E_radinte, atomA.l, atomAp.E_radinte, atomAp.l, I)
+    return radinte(atomA.E_radinte, atomA.l, atomAp.E_radinte, atomAp.l, I,0.1)
 
 try:
     from wigner import *

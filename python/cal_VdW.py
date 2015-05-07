@@ -66,7 +66,7 @@ ax=subplot(2,2,1, projection ='3d')
 #ax = fig.gca(projection='3d')
 plot([0,0],[0,0],[0,1.2],'red') # F_field
 plot([0,np.sin(theta)],[0,0],[0,np.cos(theta)],'-o') # atoms
-plot([0,0+Bx],[0,0+By],[0,0+Bz]) # B_field
+plot([0,0+np.sin(theta_B)*np.cos(phi_B)],[0,0+np.sin(theta_B)*np.sin(phi_B)],[0,0+np.cos(theta_B)]) # B_field
 ax.set_xticks([]);ax.set_yticks([]);ax.set_zticks([]);
 
 #check degeneracy
@@ -75,7 +75,7 @@ N_list = [pair_12]
 
 #============= Create base =================
 
-N_list1 = create_base(pair_12, N_list,2, 20,2, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list,2, 20,3, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -162,10 +162,6 @@ if len(V_A[V_A!=0])!=0:
     V_Stark1[V_A !=0] = V_R[V_A!=0]*V_A[V_A!=0]
     V_Stark1 = V_Stark1 + V_Stark1.T - np.diag(V_Stark1.diagonal())
     V_Stark1 = V_Stark1*1e-9
-if __name__ == '__main__':             
-    subplot(2,2,3)
-    imshow(V_Stark1)
-    colorbar()
 
 V_R = np.zeros_like(V_VdW)
 V_A = np.zeros_like(V_VdW)
@@ -177,8 +173,8 @@ if len(V_A[V_A!=0])!=0:
     V_Stark2 = V_Stark2 + V_Stark2.T - np.diag(V_Stark2.diagonal())
     V_Stark2 = V_Stark2*1e-9
 if __name__ == '__main__':             
-    subplot(2,2,4)
-    imshow(V_Stark2)
+    subplot(2,2,3)
+    imshow(V_Stark1+V_Stark2)
     colorbar()
 
 # Zeeman
@@ -192,6 +188,10 @@ V_Zeeman += V_A
 
 V_Zeeman = V_Zeeman + V_Zeeman.T - np.diag(V_Zeeman.diagonal())
 V_Zeeman = V_Zeeman*1e-9
+if __name__ == '__main__':             
+    subplot(2,2,4)
+    imshow(V_Zeeman)
+    colorbar()
     
 # Zero-th Energy
 EI = np.diag(np.asarray([elm.E for elm in Union_list]))*1e-9
