@@ -82,8 +82,14 @@ class Ryd_atom(object):
         self.n = n
         self.l = l
         self.m = m
-        self.En = En(n, 7) # 10 to ignore the quantum defect
-        self.E_radinte = E_radinte(n, 7)
+    @property
+    def En(self):
+        return En(self.n, 7)
+    @property
+    def E_radinte(self):
+        return E_radinte(self.n, 7)
+     #   self.En = En(n, 7) # 10 to ignore the quantum defect
+     #   self.E_radinte = E_radinte(n, 7)
 #        self.E_Zeeman = self.En + Zeemanshift(l, m, Bfield)
 #    def E_Zeeman(self, B_field):
 #        return self.En + Zeemanshift(self.l, self.m, B_field)
@@ -105,7 +111,10 @@ class Ryd_pair (object):
         else:
             raise Exception('input should be of Ryd_atom class')
             pass
-        self. E = atom1.En + atom2.En
+    @property
+    def E(self):
+        return self.atom1.En + self.atom2.En
+        #self. E = atom1.En + atom2.En
 #        self.E_Zeeman = atom1.E_Zeeman + atom2.E_Zeeman
         
             

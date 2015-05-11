@@ -1,0 +1,3 @@
+LIBRARY radinte_sqrt.pyd
+EXPORTS
+PyInit_radinte_sqrt

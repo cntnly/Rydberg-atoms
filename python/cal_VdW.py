@@ -24,11 +24,11 @@ if __name__ == '__main__':
 #reload(constant)
 #from constant import *
 # import radinte
-import pyximport; pyximport.install()
-try:
-    from radinte_sqrt import *
-except ImportError:
-    raise Exception('No radinte module found')
+#import pyximport; pyximport.install()
+#try:
+#    from radinte_sqrt import *
+#except ImportError:
+#    raise Exception('No radinte module found')
 try:
     from functions import *
 except ImportError:
@@ -75,7 +75,8 @@ N_list = [pair_12]
 
 #============= Create base =================
 
-N_list1 = create_base(pair_12, N_list,2, 20,2, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list,2, 20,2, 100e9/2)    
+                        
 Union_list = N_list + N_list1
 #=============================
 
@@ -118,9 +119,9 @@ V_Zeeman = np.zeros_like(V_VdW)
 mask1 = (np.tril(np.ones_like(V_VdW))!=0)
 
 #vectorize necessary functions
-rad_vec = np.vectorize(radinte)
-A_vec = np.vectorize(A_Integral)
-A_Stark_vec = np.vectorize(A_Stark)
+rad_vec = np.vectorize(radinte, otypes=[np.float])
+A_vec = np.vectorize(A_Integral, otypes=[np.float])
+A_Stark_vec = np.vectorize(A_Stark, otypes=[np.float])
 A_Zeeman_vec = np.vectorize(A_Zeeman)
 
 V_row = np.asarray([(elm.atom1.n, elm.atom1.l, elm.atom1.m, elm.atom1.E_radinte, elm.atom2.n, elm.atom2.l, elm.atom2.m, elm.atom2.E_radinte) for elm in Union_list])
@@ -152,7 +153,7 @@ V_VdW = V_VdW*1e-9 # convert to GHz.m^3
 
 if __name__ == '__main__':             
     figure(1)
-    subplot(2,2,2)
+    subplot(2,2,2,rasterized=True)
     imshow(V_VdW)
     colorbar()
 
@@ -176,7 +177,7 @@ if len(V_A[V_A!=0])!=0:
     V_Stark2 = V_Stark2 + V_Stark2.T - np.diag(V_Stark2.diagonal())
     V_Stark2 = V_Stark2*1e-9
 if __name__ == '__main__':             
-    subplot(2,2,3)
+    subplot(2,2,3,rasterized=True)
     imshow(V_Stark1+V_Stark2)
     colorbar()
 
@@ -192,7 +193,7 @@ V_Zeeman += V_A
 V_Zeeman = V_Zeeman + V_Zeeman.T - np.diag(V_Zeeman.diagonal())
 V_Zeeman = V_Zeeman*1e-9
 if __name__ == '__main__':             
-    subplot(2,2,4)
+    subplot(2,2,4,rasterized=True)
     imshow(V_Zeeman)
     colorbar()
     
@@ -247,8 +248,8 @@ if index1!=index2:
 #xlabel('$R (\mu$m)')
 #ylabel('Rel. energy (GHz)')
 
-figure(0);subplot(2,2,2);
-pcolor(R,np.arange(length+1)-0.5,out_vec1.T**2)
+figure(0);subplot(2,2,2,rasterized=True);
+pcolormesh(R,np.arange(length+1)-0.5,out_vec1.T**2)
 xlim(R_min, R_max), ylim(ymin = max(index1 -100.5,-0.5),ymax= min(index1+100.5,length-.5))
 xscale('log')
 xticks([])
@@ -399,3 +400,7 @@ xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 
 print(popt1)
+#
+#import pstats
+#p = pstats.Stats('profile.tmp')
+#p.sort_stats('cumulative').print_stats(10)

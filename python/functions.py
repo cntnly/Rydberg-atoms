@@ -6,6 +6,7 @@ Created on Fri Mar 27 12:02:57 2015
 """
 from __future__ import division
 import numpy as np
+import gc
 #from para import *
 from constant import *
 import pyximport; pyximport.install()
@@ -60,10 +61,13 @@ def A_Stark (lA, mA, lAp, mAp):
     F makes with quantization axis (Bfield) angle theta and with Bfield_atom pair plan angle phi
     
     """
-    Y10 = Wigner3j(lA, 1, lAp, -mA, 0, mAp)
-    A = (1-2*((1-lAp + lA - mA)%2))*np.sqrt((2*lA + 1)*(2*lAp + 1))*Wigner3j(lA, 1, lAp, 0,0,0)
-    return A*Y10
-    
+    if np.abs(lA-lAp)!=1:
+        return 0
+    else:
+        Y10 = Wigner3j(lA, 1, lAp, -mA, 0, mAp)
+        A = (1-2*((1-lAp + lA - mA)%2))*np.sqrt((2*lA + 1)*(2*lAp + 1))*Wigner3j(lA, 1, lAp, 0,0,0)
+        return A*Y10
+        
 def A_Stark_atom(atomA, atomAp):
     """
     A_Stark_atom(atomA, atomAp)
@@ -103,30 +107,33 @@ def A_Integral(lA, mA, lB, mB, lAp, mAp, lBp, mBp, theta, epsilon =1e-10):
     A_Int(lA, mA, lB, mB, lAp, mAp, lBp, mBp, theta, epsilon =1e-10)
     Calculate the angular part of VdW interaction. Needed Wigner3j and Wigner6j
     """
-    S = 0.
-    if np.abs(2 - 3* np.sin(theta)**2) > epsilon :
-        A = Wigner3j(lA, 1, lAp, -mA, 1, mAp)* Wigner3j(lB, 1, lBp, -mB, -1, mBp)
-        A += Wigner3j(lA, 1, lAp, -mA, -1, mAp)* Wigner3j(lB, 1, lBp, -mB, 1, mBp)
-        S += - A* (2 - 3* np.sin(theta)**2)*0.5
-    if np.abs(np.sin(theta)) > epsilon:
-        A = Wigner3j(lA, 1, lAp, -mA, 1, mAp)* Wigner3j(lB, 1, lBp, -mB, 1, mBp)
-        A += Wigner3j(lA, 1, lAp, -mA, -1, mAp)* Wigner3j(lB, 1, lBp, -mB, -1, mBp)
-        S += - A* (np.sin(theta)**2)*1.5
-    if np.abs(1-3*np.cos(theta)**2) > epsilon:
-        A = Wigner3j(lA, 1, lAp, -mA, 0, mAp)* Wigner3j(lB, 1, lBp, -mB, 0, mBp)
-        S += A*(1- 3* np.cos(theta)**2)
+    if np.abs(lA-lAp)!=1:
+        return 0
+    else:
+        S = 0.
+        if np.abs(2 - 3* np.sin(theta)**2) > epsilon :
+            A = Wigner3j(lA, 1, lAp, -mA, 1, mAp)* Wigner3j(lB, 1, lBp, -mB, -1, mBp)
+            A += Wigner3j(lA, 1, lAp, -mA, -1, mAp)* Wigner3j(lB, 1, lBp, -mB, 1, mBp)
+            S += - A* (2 - 3* np.sin(theta)**2)*0.5
+        if np.abs(np.sin(theta)) > epsilon:
+            A = Wigner3j(lA, 1, lAp, -mA, 1, mAp)* Wigner3j(lB, 1, lBp, -mB, 1, mBp)
+            A += Wigner3j(lA, 1, lAp, -mA, -1, mAp)* Wigner3j(lB, 1, lBp, -mB, -1, mBp)
+            S += - A* (np.sin(theta)**2)*1.5
+        if np.abs(1-3*np.cos(theta)**2) > epsilon:
+            A = Wigner3j(lA, 1, lAp, -mA, 0, mAp)* Wigner3j(lB, 1, lBp, -mB, 0, mBp)
+            S += A*(1- 3* np.cos(theta)**2)
+        
+        if np.abs(np.sin(2*theta)) > epsilon :
+            A = Wigner3j(lA, 1, lAp, -mA, -1, mAp)* Wigner3j(lB, 1, lBp, -mB, 0, mBp)
+            A += -Wigner3j(lA, 1, lAp, -mA, 1, mAp)* Wigner3j(lB, 1, lBp, -mB, 0, mBp)
+            A += Wigner3j(lA, 1, lAp, -mA, 0, mAp)* Wigner3j(lB, 1, lBp, -mB, -1, mBp)
+            A += -Wigner3j(lA, 1, lAp, -mA, 0, mAp)* Wigner3j(lB, 1, lBp, -mB, 1, mBp)
+            S += -1.5* np.sin(theta)* np.cos(theta)* np.sqrt(2)* A
     
-    if np.abs(np.sin(2*theta)) > epsilon :
-        A = Wigner3j(lA, 1, lAp, -mA, -1, mAp)* Wigner3j(lB, 1, lBp, -mB, 0, mBp)
-        A += -Wigner3j(lA, 1, lAp, -mA, 1, mAp)* Wigner3j(lB, 1, lBp, -mB, 0, mBp)
-        A += Wigner3j(lA, 1, lAp, -mA, 0, mAp)* Wigner3j(lB, 1, lBp, -mB, -1, mBp)
-        A += -Wigner3j(lA, 1, lAp, -mA, 0, mAp)* Wigner3j(lB, 1, lBp, -mB, 1, mBp)
-        S += -1.5* np.sin(theta)* np.cos(theta)* np.sqrt(2)* A
-
-    A = (1-2*((1-lAp + lA - mA)%2))*np.sqrt((2*lA + 1)*(2*lAp + 1))*Wigner3j(lA, 1, lAp, 0,0,0)
-    A *= (1-2*((1-lBp + lB - mB)%2))*np.sqrt((2*lB + 1)*(2*lBp + 1))*Wigner3j(lB, 1, lBp, 0,0,0)
-    S *= A
-    return S
+        A = (1-2*((1-lAp + lA - mA)%2))*np.sqrt((2*lA + 1)*(2*lAp + 1))*Wigner3j(lA, 1, lAp, 0,0,0)
+        A *= (1-2*((1-lBp + lB - mB)%2))*np.sqrt((2*lB + 1)*(2*lBp + 1))*Wigner3j(lB, 1, lBp, 0,0,0)
+        S *= A
+        return S
 
 def A_Int(pairAB, pairABp):
     """
@@ -252,6 +259,7 @@ def count_doub(list1, list2):
     return count
     
 def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
+    gc.disable()
     atom_1 = pair.atom1
     atom_2 = pair.atom2
     N_list = []
@@ -267,14 +275,15 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
                     for nB in np.arange(atom_2.n -delta_n, atom_2.n +delta_n+0.1, 1):
                         for lB in np.arange(max(0, atom_2.l -delta_l), min(atom_2.l +delta_l+.1,nB),1):
                             for mB in np.arange(-lB, lB+0.1,1):
-                                if abs(mB -atom_2.m) <=delta_m:
+                                if np.abs(mB -atom_2.m) <=delta_m:
                                     try:
                                         atomB_temp = Ryd_atom(nB,lB,mB)
                                     except:
                                         print(nB, lB,mB)                            
                                  #   if abs(atomB_temp.En - atom_2.En) < delta_E:
                                     pairAB_temp = Ryd_pair(atomA_temp, atomB_temp) 
-                                    if abs(pairAB_temp.E - pair.E) < delta_E:
+                                    if np.abs(pairAB_temp.E - pair.E) < delta_E:
                                         if  pairAB_temp not in Not_list:
                                             N_list.append(pairAB_temp)
+    gc.enable()
     return N_list
