@@ -24,6 +24,35 @@ try:
 except ImportError:
     raise Exception('No wigner module found')
     
+Wigner3j0=np.vectorize(Wigner3j0, otypes=[np.float])
+
+delta_l = delta_m =5
+wig_l1=np.arange(l1-delta_l,l1+delta_l)
+wig_m1=np.arange(m1-delta_m,m1+delta_m)
+Ide=np.array([-1,0,1])
+L1,M1, L2,M2,ID=np.meshgrid(wig_l1, wig_m1, wig_l1,wig_m1,Ide, sparse=True)
+
+#wigner3j_vec = np.vectorize(Wigner3j, otypes=[np.float])
+Wigner3j_list = Wigner3j0(L1,1,L2,-M1,ID,M2)
+del(L1,M1,L2,M2,ID)
+L1,L2 = np.meshgrid(wig_l1, wig_l1, sparse=True)
+Wigner3j_list000 = Wigner3j0(L1, 1, L2, 0,0,0)
+del(L1,L2,wig_l1,wig_m1,Ide)
+def Wigner3j(lA, k, lAp, mA, q, mAp):
+    if (mA == 0)&(q==0)&(mAp==0):
+        try:
+            S = Wigner3j_list000[lA-l1+delta_l, lAp - l1 +delta_l]
+        except IndexError:
+            raise Exception('Not yet in list')
+        return S
+    else:        
+        try:
+            S = Wigner3j_list[-mA - m1+delta_m,lA-l1+delta_l, lAp-l1+delta_l, mAp -m1+delta_m, q+1 ]
+        except IndexError:
+            print(lA, k, lAp, mA, q, mAp)
+            raise Exception('Wigner3j_list is not large enough')
+        return S    
+#@np.vectorize    
 def A_Stark (lA, mA, lAp, mAp):
     """
     A_Stark (lA, mA, lAp, mAp)
@@ -41,6 +70,8 @@ def A_Stark_atom(atomA, atomAp):
     Calculate angular integral for Stark shift, case F aligned with quantization axis
     """
     return A_Stark(atomA.l, atomA.m, atomAp.l, atomAp.m)
+
+#@np.vectorize    
 def A_Zeeman(lA, mA, lAp, mAp, Bx0, By0, Bz0):
     """
     A_Zeeman(lA, mA, lAp, mAp, Bx0, By0, Bz0)
@@ -66,6 +97,7 @@ def R_Int(pairAB, pairABp):
     """
     return radinte_atom(pairAB.atom1, pairABp.atom1)*radinte_atom(pairAB.atom2, pairABp.atom2)
 
+#@np.vectorize
 def A_Integral(lA, mA, lB, mB, lAp, mAp, lBp, mBp, theta, epsilon =1e-10):
     """
     A_Int(lA, mA, lB, mB, lAp, mAp, lBp, mBp, theta, epsilon =1e-10)
@@ -167,8 +199,8 @@ def Search_Stark(pair, Not_list, Choice_F, delta_n_max):
     l1, l2 = atom_1.l, atom_2.l
     m1, m2 = atom_1.m, atom_2.m
 
-    for lA in arange(np.abs(l1 -1), l1+1.1, 2):
-        for mA in arange(m1 -1, m1 +1.1, 1):
+    for lA in np.arange(np.abs(l1 -1), l1+1.1, 2):
+        for mA in np.arange(m1 -1, m1 +1.1, 1):
             if (-lA <= mA) & (mA <= lA):
                 atomA_temp = Ryd_atom(100, lA, mA)
                 A_Int_temp = A_Stark_atom(atom_1, atomA_temp)
@@ -187,8 +219,8 @@ def Search_Stark(pair, Not_list, Choice_F, delta_n_max):
                             switch_A = -0.5* (switch_A + np.abs(switch_A))
                             iA = 0
                         iA += 1 
-    for lB in arange(np.abs(l1 -1), l1+1.1, 2):
-         for mB in arange(m1 -1, m1 +1.1, 1):
+    for lB in np.arange(np.abs(l1 -1), l1+1.1, 2):
+         for mB in np.arange(m1 -1, m1 +1.1, 1):
             if (-lB <= mB) & (mB <= lB):
                 atomB_temp = Ryd_atom(100, lB, mB)
                 A_Int_temp = A_Stark_atom(atom_2, atomB_temp)
@@ -223,18 +255,18 @@ def create_base(pair, Not_list, delta_n, delta_l, delta_m, delta_E):
     atom_1 = pair.atom1
     atom_2 = pair.atom2
     N_list = []
-    for nA in arange(atom_1.n -delta_n, atom_1.n +delta_n+0.1, 1):
-        for lA in arange(max(0, atom_1.l -delta_l), min(atom_1.l +delta_l +0.1,nA),1):
-            for mA in arange(-lA, lA+0.1,1):
+    for nA in np.arange(atom_1.n -delta_n, atom_1.n +delta_n+0.1, 1):
+        for lA in np.arange(max(0, atom_1.l -delta_l), min(atom_1.l +delta_l +0.1,nA),1):
+            for mA in np.arange(-lA, lA+0.1,1):
                 if abs(mA -atom_1.m) <=delta_m:
                     try:
                         atomA_temp = Ryd_atom(nA,lA,mA)
                     except:
                         print(nA, lA,mA)                            
                  #   if abs(atomA_temp.En - atom_1.En) < delta_E:
-                    for nB in arange(atom_2.n -delta_n, atom_2.n +delta_n+0.1, 1):
-                        for lB in arange(max(0, atom_2.l -delta_l), min(atom_2.l +delta_l+.1,nB),1):
-                            for mB in arange(-lB, lB+0.1,1):
+                    for nB in np.arange(atom_2.n -delta_n, atom_2.n +delta_n+0.1, 1):
+                        for lB in np.arange(max(0, atom_2.l -delta_l), min(atom_2.l +delta_l+.1,nB),1):
+                            for mB in np.arange(-lB, lB+0.1,1):
                                 if abs(mB -atom_2.m) <=delta_m:
                                     try:
                                         atomB_temp = Ryd_atom(nB,lB,mB)

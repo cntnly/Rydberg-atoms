@@ -75,7 +75,7 @@ N_list = [pair_12]
 
 #============= Create base =================
 
-N_list1 = create_base(pair_12, N_list,2, 20,3, 100e9/2)                            
+N_list1 = create_base(pair_12, N_list,2, 20,2, 100e9/2)                            
 Union_list = N_list + N_list1
 #=============================
 
@@ -142,6 +142,9 @@ Pair2_n2, Pair2_l2, Pair2_m2, Pair2_Erad2 = Pair2_n2[mask1], Pair2_l2[mask1], Pa
 V_A[mask1] = A_vec(Pair1_l1, Pair1_m1, Pair1_l2, Pair1_m2, Pair2_l1, Pair2_m1, Pair2_l2, Pair2_m2, theta)
 # Choose only elements different from 0
 mask2 = (V_A[mask1] !=0)
+
+#V_A = A_vec(Pair1_l1, Pair1_m1, Pair1_l2, Pair1_m2, Pair2_l1, Pair2_m1, Pair2_l2, Pair2_m2, theta)
+#mask2 = (V_A!=0)
 V_R[V_A!=0] = rad_vec(Pair1_Erad1[mask2], Pair1_l1[mask2], Pair2_Erad1[mask2], Pair2_l1[mask2], 1)*rad_vec(Pair1_Erad2[mask2], Pair1_l2[mask2], Pair2_Erad2[mask2], Pair2_l2[mask2], 1)
 V_VdW[V_A!=0] = V_R[V_A!=0]*V_A[V_A!=0]
 V_VdW = V_VdW + V_VdW.T - np.diag(V_VdW.diagonal())

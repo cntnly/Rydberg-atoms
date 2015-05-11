@@ -5,8 +5,8 @@ except:  # for scipy v >= 0.10
     from scipy.misc import factorial
 from numpy import arange, floor, exp, log, asarray, split, pi, around
 
-Wigner3j_list =[]
-Wigner6j_list = []
+#Wigner3j_list =[]
+#Wigner6j_list = []
 
 def log_factorial(n, N_max = 200):
     """
@@ -19,7 +19,7 @@ def log_factorial(n, N_max = 200):
     else:
         return log(factorial(n))
 
-def Wigner3j(j1,j2,j3,m1,m2,m3):
+def Wigner3j0(j1,j2,j3,m1,m2,m3):
 #======================================================================
 # Wigner3j.m by David Terr, Raytheon, 6-17-04
 #
@@ -38,9 +38,9 @@ def Wigner3j(j1,j2,j3,m1,m2,m3):
 #======================================================================
 
    	# First look in the list to reduce the calculation time, otherwise do the calculation
-    for elm in Wigner3j_list:
-        if [j1,j2,j3,m1,m2,m3] == elm[:6]:
-            return	elm[6]
+#    for elm in Wigner3j_list:
+#        if [j1,j2,j3,m1,m2,m3] == elm[:6]:
+#            return	elm[6]
     # return to numpy array
  #   j1,j2,j3,m1,m2,m3 = split(asarray([j1,j2,j3,m1,m2,m3]), 6)
 
@@ -105,9 +105,8 @@ def Wigner3j(j1,j2,j3,m1,m2,m3):
         out3j += exp(temp3j)*(1-2*((t+j1-j2-m3)%2))
     
  #   out3j = temp3j1
-    Wigner3j_list.append([j1,j2,j3,m1,m2,m3, out3j])
+#    Wigner3j_list.append([j1,j2,j3,m1,m2,m3, out3j])
     return out3j
-
 def Wigner6j(j1,j2,j3,J1,J2,J3):
 #======================================================================
 # Calculating the Wigner6j-Symbols using the Racah-Formula                
