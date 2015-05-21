@@ -14,11 +14,13 @@ try:
     from radinte_sqrt import *
 except ImportError:
     raise Exception('No radinte module found')
+radinte_vec = np.vectorize(lambda E1,L1,E2,L2,I: radinte(E1,L1,E2,L2,I,0.1), otypes=[np.float])
+    
 def radinte_atom(atomA, atomAp, I =1):
     """
     radinte_atom(atomA, atomAp, I =1)
     Calculate radinte for pair of atoms"""
-    return radinte(atomA.E_radinte, atomA.l, atomAp.E_radinte, atomAp.l, I,0.1)
+    return rad_vec(atomA.n, atomA.l, atomAp.n, atomAp.l, I)
 
 try:
     from wigner import *
@@ -27,11 +29,12 @@ except ImportError:
     
 Wigner3j0=np.vectorize(Wigner3j0, otypes=[np.float])
 
+delta_n=5
 delta_l = delta_m =5
 wig_l1=np.arange(l1-delta_l,l1+delta_l)
 wig_m1=np.arange(m1-delta_m,m1+delta_m)
 Ide=np.array([-1,0,1])
-L1,M1, L2,M2,ID=np.meshgrid(wig_l1, wig_m1, wig_l1,wig_m1,Ide, sparse=True)
+L1,M1, L2,M2,ID=np.meshgrid(wig_l1, wig_m1, wig_l1,wig_m1,Ide, sparse=True, indexing='ij')
 
 #wigner3j_vec = np.vectorize(Wigner3j, otypes=[np.float])
 Wigner3j_list = Wigner3j0(L1,1,L2,-M1,ID,M2)
@@ -48,11 +51,29 @@ def Wigner3j(lA, k, lAp, mA, q, mAp):
         return S
     else:        
         try:
-            S = Wigner3j_list[-mA - m1+delta_m,lA-l1+delta_l, lAp-l1+delta_l, mAp -m1+delta_m, q+1 ]
+            S = Wigner3j_list[lA-l1+delta_l,-mA - m1+delta_m, lAp-l1+delta_l, mAp -m1+delta_m, q+1 ]
         except IndexError:
             print(lA, k, lAp, mA, q, mAp)
             raise Exception('Wigner3j_list is not large enough')
         return S    
+        
+        
+rad_n1=np.arange(n1-delta_n,n1+delta_n)
+rad_l1=np.arange(l1-delta_l,l1+delta_l)
+N1, L1, N2, L2 = np.meshgrid(rad_n1, rad_l1, rad_n1, rad_l1, sparse=True,  indexing='ij')
+E_rad_vec= np.vectorize(E_radinte, otypes=[np.float])
+E1 = E_rad_vec(N1, 7); E2 = E_rad_vec(N2, 7)
+Rad_list= radinte_vec(E1,L1, E2,L2,1)
+def rad(nA, lA, nAp, lAp,I= 1):
+    if I != 1:
+        raise Exception('Use radinte_vec instead')
+    try:
+        S = Rad_list[nA - n1+delta_n, lA-l1+delta_l, nAp-n1+delta_l, lAp-l1+delta_l]
+    except IndexError:
+        print(nA,lA, nAp, lAp)
+        raise Exception('Not yet in calculated list')
+    return S
+rad_vec = np.vectorize(rad, otypes=[np.float])        
 #@np.vectorize    
 def A_Stark (lA, mA, lAp, mAp):
     """
@@ -101,6 +122,7 @@ def R_Int(pairAB, pairABp):
     """
     return radinte_atom(pairAB.atom1, pairABp.atom1)*radinte_atom(pairAB.atom2, pairABp.atom2)
 
+    
 #@np.vectorize
 def A_Integral(lA, mA, lB, mB, lAp, mAp, lBp, mBp, theta, epsilon =1e-10):
     """
@@ -108,6 +130,8 @@ def A_Integral(lA, mA, lB, mB, lAp, mAp, lBp, mBp, theta, epsilon =1e-10):
     Calculate the angular part of VdW interaction. Needed Wigner3j and Wigner6j
     """
     if np.abs(lA-lAp)!=1:
+        return 0
+    if np.abs(lB-lBp)!=1:
         return 0
     else:
         S = 0.

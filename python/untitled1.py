@@ -1,59 +1,24 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon May 11 18:20:07 2015
+import struck
+import wave
+import winsound,sys
+import time, datetime
+today=datetime.datetime.now()
+today.hour
+time.sleep(1)
 
-@author: Anonymous
-"""
+samplelen=100
+noise_output = wave.open('noise2.wav', 'w')
+noise_output.setparams((2, 2, 100, 0, 'NONE', 'not compressed'))
 
-import matplotlib.pyplot as plt
-import numpy as np
+values = []
 
-# make these smaller to increase the resolution
-dx, dy = 0.15, 0.05
+for i in range(0, samplelen):
+        value = 32767
+        packed_value = pack('h', value)
+        values.append(packed_value)
+        values.append(packed_value)
 
-# generate 2 2d grids for the x & y bounds
-y, x = np.mgrid[slice(-3, 3 + dy, dy),
-                slice(-3, 3 + dx, dx)]
-z = (1 - x / 2. + x ** 5 + y ** 3) * np.exp(-x ** 2 - y ** 2)
-# x and y are bounds, so z should be the value *inside* those bounds.
-# Therefore, remove the last value from the z array.
-z = z[:-1, :-1]
-z_min, z_max = -np.abs(z).max(), np.abs(z).max()
+value_str = b''.join(values)
+noise_output.writeframes(value_str)
 
-
-
-plt.subplot(2, 2, 1)
-plt.pcolor(x, y, z, cmap='RdBu', vmin=z_min, vmax=z_max)
-plt.title('pcolor')
-# set the limits of the plot to the limits of the data
-plt.axis([x.min(), x.max(), y.min(), y.max()])
-plt.colorbar()
-
-
-
-plt.subplot(2, 2, 2)
-plt.pcolormesh(x, y, z, cmap='RdBu', vmin=z_min, vmax=z_max)
-plt.title('pcolormesh')
-# set the limits of the plot to the limits of the data
-plt.axis([x.min(), x.max(), y.min(), y.max()])
-plt.colorbar()
-
-
-
-plt.subplot(2, 2, 3)
-plt.imshow(z, cmap='RdBu', vmin=z_min, vmax=z_max,
-           extent=[x.min(), x.max(), y.min(), y.max()],
-           interpolation='nearest', origin='lower')
-plt.title('image (interp. nearest)')
-plt.colorbar()
-
-
-
-ax = plt.subplot(2, 2, 4)
-ax.pcolorfast(x, y, z, cmap='RdBu', vmin=z_min, vmax=z_max)
-plt.title('pcolorfast')
-plt.colorbar()
-
-
-
-plt.show()
+noise_output.close()
