@@ -8,7 +8,7 @@ import builtins
 import sys, os
 path = os.path.dirname(os.path.abspath('__file__'))
 #path= '/home/2kome/Desktop/testdeck/test1/python'
-path = 'C:/Users/r14/Documents/GitHub/test/python'
+path = 'C:\\Users\\r14\\Documents\\GitHub\\test\\python'
 if path not in sys.path:
     sys.path.append(path)
 from imp import reload
@@ -75,7 +75,7 @@ N_list = [pair_12]
 
 #============= Create base =================
 
-N_list1 = create_base(pair_12, N_list,2, 20,3, 100e9/2)    
+N_list1 = create_base(pair_12, N_list,2, 20,2, 100e9/2)    
                         
 Union_list = N_list + N_list1
 #=============================

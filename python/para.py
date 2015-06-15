@@ -5,7 +5,7 @@ from numpy import *
 import builtins
 
 # Define levels
-builtins.n1 = 60
+builtins.n1 = 63
 builtins.l1 = n1-1
 #s1 = 1/2
 #j1 = l1 + 1/2
