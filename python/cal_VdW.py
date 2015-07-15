@@ -404,6 +404,16 @@ xlabel('$R (\mu$m)')
 ylabel('Rel. energy (GHz)')
 
 print(popt1)
+
+popt3,pcov3 = curve_fit(doubled, R[100:], (out_egr1[100:]-offset1)-(out_egr2[100:]-offset2), p0=(-1,1))
+figure(8); clf();
+loglog(R,abs((out_egr1-offset1)-(out_egr2-offset2)), '+',R, abs(doubled(R, *popt3)))
+popt4,pcov4 = curve_fit(doubled, R[100:], (out_egr1[100:]-offset1)+(out_egr2[100:]-offset2), p0=(-1,1))
+figure(9); clf();
+loglog(R,abs((out_egr1-offset1)+(out_egr2-offset2)), '+',R, abs(doubled(R, *popt4)))
+print(popt3, popt4)
+print(0.5*(popt3+popt4))
+print(-0.5*(popt3-popt4))
 #
 #import pstats
 #p = pstats.Stats('profile.tmp')

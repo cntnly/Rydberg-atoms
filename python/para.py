@@ -5,13 +5,13 @@ from numpy import *
 import builtins
 
 # Define levels
-builtins.n1 = 63
+builtins.n1 = 61
 builtins.l1 = n1-1
 #s1 = 1/2
 #j1 = l1 + 1/2
 builtins.m1 = l1
 
-builtins.n2 = 60
+builtins.n2 = 62
 builtins.l2 = n2-1     
 #s2 =1/2
 #j2 = l2 + 1/2
